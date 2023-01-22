@@ -22,6 +22,6 @@ def filter_selected_sentences(db_selected, user_request):
     reg_ex = '\s?([А-Яа-яёЁ]+)?\s?'.join(user_request)
     filtered = []
     for sent in db_selected:
-        if re.search(reg_ex, sent):
+        if re.search(reg_ex, sent.lemmatized):
             filtered.append(sent)
     return filtered

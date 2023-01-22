@@ -1,10 +1,16 @@
 from flask import Flask, render_template, request
 import spacy
+import os.path
 #import ru_core_news_sm
+from utils import parse_request, filter_selected_sentences
+from database import DBHandler
+
+
 
 app = Flask(__name__)
 # spacy.cli.download("ru")
 nlp = spacy.load('ru_core_news_sm')
+DB_PATH = 'math_corpus_database.db'
 
 
 @app.route('/')
@@ -18,11 +24,14 @@ def result():
         return render_template("index.html")
 
     user_request = request.form['text']
-    print(user_request)
+    parsed_ur = parse_request(user_request, nlp)
 
-    # connection = sqlite3.connect('math_db_new_1.db')
-    # cur = connection.cursor()
-
+    db = DBHandler(os.path.abspath(DB_PATH))
+    lemmatized_ur = [t.lemma for t in parsed_ur]
+    selected_sentences = db.select_sentences(lemmatized_ur)
+    matching_sentences = filter_selected_sentences(selected_sentences, lemmatized_ur)
+    print(matching_sentences)
+    pass
     return render_template('result.html')
 
 
