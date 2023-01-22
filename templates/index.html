@@ -67,7 +67,7 @@ knowledge</a>
                     </div>
 
                 <div class = "search-bar" id="cover">
-                    <form autocomplete = "" action = "result.html" class="search-wrapper cf" target="_blank" method = "post">
+                    <form autocomplete = "" action = "/result" class="search-wrapper cf" target="_blank" method = "post">
                         <input name = "text" type="text" placeholder="Search" required style="box-shadow: none">
                         <button type="submit" class ='submit_button'><img class = "resize" src="static/img/svg/search.svg" alt=""></button>
                     </form>
@@ -77,7 +77,7 @@ knowledge</a>
             <div class="container-keyboard" id = "container-keyboard">
                 <form action="" class="keyboard-comps" >
                     <ul id="keyboard">
-                                <li class="symbol"><a href="{{url_for('result')}}"><button class="key_button" id = 'add_button' onclick=''><img class = 'resize_key' src="static/pics/add.png"></button>
+                                <li class="symbol"><a href="/result"><button class="key_button" id = 'add_button' onclick=''><img class = 'resize_key' src="static/pics/add.png"></button>
                                 </a></li>
                                 <li class="symbol">
                                     <button class = "key_button" onclick=""><img class = 'resize_key' src="static/pics/equal.png"></button>
