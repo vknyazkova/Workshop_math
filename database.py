@@ -46,3 +46,16 @@ class DBHandler:
         self.cur.execute('''SELECT math_tagname, filename
                             FROM math_imgs''')
         return self.cur.fetchall()
+
+    def get_grammar_annotation(self, sent_id):
+        self.cur.execute('''SELECT tokens.token, pos.name, lemmas.name
+                            FROM tokens
+                            LEFT JOIN grammar_annotation
+                                ON grammar_annotation.token_id = tokens.id
+                            LEFT JOIN pos
+                                ON pos.id = grammar_annotation.pos_id
+                            LEFT JOIN lemmas
+                                ON lemmas.id = grammar_annotation.lemma_id
+                            WHERE tokens.sent_id = (?)
+                            ORDER BY tokens.word_in_sent''', (sent_id, ))
+        return self.cur.fetchall()

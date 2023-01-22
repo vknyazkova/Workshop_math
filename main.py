@@ -1,18 +1,14 @@
 from flask import Flask, render_template, request
 import spacy
 import os.path
-from translate import Translator
-from pprint import pprint
-from dataclasses import dataclass
-#import ru_core_news_sm
-from utils import filter_selected_sentences, create_query_info
+
+from utils import filter_selected_sentences, create_query_info, create_sentences_info
 from database import DBHandler
 
 
 app = Flask(__name__)
-# spacy.cli.download("ru")
 nlp = spacy.load('ru_core_news_sm')
-DB_PATH = 'math_corpus_database.db'
+DB_PATH = os.path.abspath('math_corpus_database.db')
 
 
 @app.route('/')
@@ -26,25 +22,18 @@ def result():
         return render_template("index.html")
 
     user_request = request.form['text']
-    # parsed_ur = parse_request(user_request, nlp)
-    query_info, query_pos, query_lemma, pictures = create_query_info(user_request, nlp)
-    db = DBHandler(os.path.abspath(DB_PATH))
 
-    selected_sentences = db.select_sentences(query_lemma)
-    matching_sentences = filter_selected_sentences(selected_sentences, query_lemma)
+    query_info = create_query_info(user_request, nlp, DB_PATH)
 
-    translator = Translator(to_lang="en", from_lang='ru')
-    translation = translator.translate(user_request)
+    db = DBHandler(DB_PATH)
+    selected_sentences = db.select_sentences(query_info.lemmatized.split(' '))
+    matching_sentences = filter_selected_sentences(selected_sentences, query_info.lemmatized.split(' '))
 
-    pprint(query_info)
-    print(' '.join(query_pos))
-    print(' '.join(query_lemma))
-    print(pictures)
-    pprint(matching_sentences)
-    print(translation)
+    sents_info = create_sentences_info(matching_sentences, query_info, DB_PATH)
 
-    return None
-    # return render_template('result.html')
+    # print(query_info)
+    # print(sents_info)
+    return render_template('result.html', query_info=query_info, sents_info=sents_info)
 
 
 if __name__ == '__main__':
