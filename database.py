@@ -41,3 +41,8 @@ class DBHandler:
                             AND math_annotation.id_token_end >= (SELECT * FROM tokenid)
                             LIMIT 1''', (lemma,))
         return self.cur.fetchone()
+
+    def get_math_pics(self):
+        self.cur.execute('''SELECT math_tagname, filename
+                            FROM math_imgs''')
+        return self.cur.fetchall()
