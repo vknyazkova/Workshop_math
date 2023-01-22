@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 import spacy
 import os.path
+from translate import Translator
 #import ru_core_news_sm
 from utils import parse_request, filter_selected_sentences
 from database import DBHandler
@@ -30,7 +31,14 @@ def result():
     lemmatized_ur = [t.lemma for t in parsed_ur]
     selected_sentences = db.select_sentences(lemmatized_ur)
     matching_sentences = filter_selected_sentences(selected_sentences, lemmatized_ur)
-    print(matching_sentences)
+
+    translator = Translator(to_lang="en", from_lang='ru')
+    translation = translator.translate(user_request)
+
+    for l in lemmatized_ur:
+        res = db.get_math_info(l)
+        print(res)
+    print(translation)
     pass
     return render_template('result.html')
 
