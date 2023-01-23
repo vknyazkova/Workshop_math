@@ -1,13 +1,25 @@
 import re
 from dataclasses import dataclass
 from translate import Translator
-
+from typing import Iterable
 from database import DBHandler
 
 
 @dataclass
-class QueryTokenInfo:
+class TokenInfo:
     token: str
+    color: str
+
+
+@dataclass
+class ResultTokenInfo:
+    color: str = 'black'
+    pos: str = None
+    lemma: str = None
+
+
+@dataclass
+class QueryTokenInfo(TokenInfo):
     color: str = 'green'
     model: str = None
 
@@ -15,7 +27,7 @@ class QueryTokenInfo:
 @dataclass
 class QueryInfo:
     text: str
-    tokens: list[QueryTokenInfo] = None
+    tokens: Iterable[QueryTokenInfo] = None
     translation: str = None
     pos_string: str = None
     lemmatized: str = None
@@ -60,7 +72,7 @@ def create_query_info(user_request, spacy_lm, db_path) -> QueryInfo:
     return query_info
 
 
-def filter_selected_sentences(db_selected, user_request) -> list[tuple]:
+def filter_selected_sentences(db_selected, user_request) -> Iterable[tuple]:
     """
     Отбирает из выбранных из бд предложений те, где между словами запроса не более 1 слова
     :param db_selected: список из namedtuple(id, sent, lemmatized)
@@ -75,15 +87,7 @@ def filter_selected_sentences(db_selected, user_request) -> list[tuple]:
     return filtered
 
 
-@dataclass
-class TokenInfo:
-    token: str
-    color: str = 'black'
-    pos: str = None
-    lemma: str = None
-
-
-def create_sentences_info(matching_sentences, query_info, db_path) -> list[list[TokenInfo]]:
+def create_sentences_info(matching_sentences, query_info, db_path) -> Iterable[Iterable[ResultTokenInfo]]:
     """
     Возращает список со списком TokenInfo для каждого предложения
     TokenInfo - датакласс с полями: token, color, pos, lemma
@@ -98,7 +102,7 @@ def create_sentences_info(matching_sentences, query_info, db_path) -> list[list[
             if token_annot[1] == 'PUNCT':
                 continue
             else:
-                token_info = TokenInfo(token_annot[0], pos=token_annot[1], lemma=token_annot[2])
+                token_info = ResultTokenInfo(token_annot[0], pos=token_annot[1], lemma=token_annot[2])
                 if i + 1 < len(sent_annot):
                     if sent_annot[i + 1][1] == 'PUNCT':
                         token_info.token = token_annot[0] + sent_annot[i + 1][0]

@@ -31,8 +31,8 @@ def result():
 
     sents_info = create_sentences_info(matching_sentences, query_info, DB_PATH)
 
-    # print(query_info)
-    # print(sents_info)
+    print(query_info)
+    print(sents_info)
     return render_template('result.html', query_info=query_info, sents_info=sents_info)
 
 
