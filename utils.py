@@ -1,49 +1,13 @@
 import re
-from dataclasses import dataclass
 from translate import Translator
 from typing import Iterable
 from database import DBHandler
 
-
-@dataclass
-class TokenInfo:
-    token: str
-    color: str
+from custom_dataclasses import ResultInfo, ResultTokenInfo, QueryInfo, QueryTokenInfo
 
 
-@dataclass
-class ResultTokenInfo:
-    color: str = 'black'
-    pos: str = None
-    lemma: str = None
-
-
-@dataclass
-class ResultInfo:
-    tokens: Iterable[ResultTokenInfo] = None
-    youtube_link: str = None
-
-
-@dataclass
-class QueryTokenInfo(TokenInfo):
-    color: str = 'green'
-    model: str = None
-
-
-@dataclass
-class QueryInfo:
-    text: str
-    tokens: Iterable[QueryTokenInfo] = None
-    translation: str = None
-    pos_string: str = None
-    lemmatized: str = None
-    pictures: list = None
-
-
-def create_query_info(user_request, spacy_lm, db_path) -> QueryInfo:
-    """
-    Парсит запрос, переводит и возвращает всю информацию в виде экземпляра датакласса QueryInfo
-    """
+def create_query_info(user_request: str, spacy_lm, db_path: str) -> QueryInfo:
+    """Парсит запрос, переводит и возвращает всю информацию в виде экземпляра датакласса QueryInfo"""
 
     query_info = QueryInfo(user_request)
     translator = Translator(to_lang="en", from_lang='ru')
@@ -81,27 +45,25 @@ def create_query_info(user_request, spacy_lm, db_path) -> QueryInfo:
 def filter_selected_sentences(db_selected, user_request) -> Iterable[tuple]:
     """
     Отбирает из выбранных из бд предложений те, где между словами запроса не более 1 слова
-    :param db_selected: список из namedtuple(id, sent, lemmatized)
+    :param db_selected: список из namedtuple(id, sent, lemmatized, link)
     :param user_request: список из лемматизированных строк запроса
     """
 
     reg_ex = '\s?([А-Яа-яёЁ]+)?\s?'.join(user_request)
     filtered = []
     for sent in db_selected:
-        print(re.search(reg_ex, sent.lemmatized))
         if re.search(reg_ex, sent.lemmatized):
             filtered.append(sent)
     return filtered
 
 
-def create_sentences_info(matching_sentences, query_info, db_path) -> Iterable[ResultInfo]:
-    """
-    Возращает список со списком TokenInfo для каждого предложения
-    TokenInfo - датакласс с полями: token, color, pos, lemma
-    """
+def create_sentences_info(matching_sentences, query_info: QueryInfo, db_path) -> Iterable[ResultInfo]:
+    """Возращает список с нужной информацией о каждом предложении из выдачи в виде экземпляра датакласса ResultInfo"""
+
     sentences = []
     query_lemmas_with_colors = {l: query_info.tokens[i].color for i, l in enumerate(query_info.lemmatized.split(' '))}
     db = DBHandler(db_path)
+
     for sent in matching_sentences:
         sent_info = ResultInfo(youtube_link=sent.link)
         sent_info.tokens = []
@@ -110,13 +72,14 @@ def create_sentences_info(matching_sentences, query_info, db_path) -> Iterable[R
             if token_annot[1] == 'PUNCT':
                 continue
             else:
-                token_info = ResultTokenInfo(token_annot[0], pos=token_annot[1], lemma=token_annot[2])
+                token_info = ResultTokenInfo(token=token_annot[0], pos=token_annot[1], lemma=token_annot[2])
                 if i + 1 < len(sent_annot):
-                    if sent_annot[i + 1][1] == 'PUNCT':
+                    if sent_annot[i + 1][1] == 'PUNCT':  # приклеиваем запятые к словам
                         token_info.token = token_annot[0] + sent_annot[i + 1][0]
                         token_info.lemma = token_annot[2] + sent_annot[i + 1][2]
                 if token_annot[2] in query_lemmas_with_colors:
-                    token_info.color = query_lemmas_with_colors[token_annot[2]]
+                    if token_within_query(query_info.lemmatized, sent.lemmatized, i):
+                        token_info.color = query_lemmas_with_colors[token_annot[2]]
             sent_info.tokens.append(token_info)
         sentences.append(sent_info)
 
@@ -124,7 +87,30 @@ def create_sentences_info(matching_sentences, query_info, db_path) -> Iterable[R
 
 
 def create_full_link(video_link, timecode):
+    """Собирает ссылку на определенный момент в видео"""
+
     if video_link and timecode:
         start = timecode.split(' ')[0]
         return video_link + '&t=' + start + 's'
     return
+
+
+def token_within_query(query_lemmatized: str, sentence_lemmatized: str, i) -> bool:
+    """
+    Проверяет, что i-е слово стоит рядом со словами из запроса, а не отдельно в предложении
+    :param query_lemmatized: строка лемматизированного запроса
+    :param sentence_lemmatized: строка лемматизированного предложения
+    :param i: порядковый номер в предложении токена, который мы проверяем
+    """
+
+    query_lemmatized_list = query_lemmatized.split(' ')
+    sentence_lemmatized_list = sentence_lemmatized.split(' ')
+
+    i_token_char_start = len(' '.join(sentence_lemmatized_list[: i])) + 1
+    i_token_char_end = i_token_char_start + len(sentence_lemmatized_list[i])
+
+    reg_ex = '\s?([А-Яа-яёЁ]+)?\s?'.join(query_lemmatized_list)
+    for m in re.finditer(reg_ex, sentence_lemmatized):
+        if i_token_char_start >= m.start() and i_token_char_end <= m.end():
+            return True
+    return False
