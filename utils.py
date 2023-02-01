@@ -19,6 +19,12 @@ class ResultTokenInfo:
 
 
 @dataclass
+class ResultInfo:
+    tokens: Iterable[ResultTokenInfo] = None
+    youtube_link: str = None
+
+
+@dataclass
 class QueryTokenInfo(TokenInfo):
     color: str = 'green'
     model: str = None
@@ -82,12 +88,13 @@ def filter_selected_sentences(db_selected, user_request) -> Iterable[tuple]:
     reg_ex = '\s?([А-Яа-яёЁ]+)?\s?'.join(user_request)
     filtered = []
     for sent in db_selected:
+        print(re.search(reg_ex, sent.lemmatized))
         if re.search(reg_ex, sent.lemmatized):
             filtered.append(sent)
     return filtered
 
 
-def create_sentences_info(matching_sentences, query_info, db_path) -> Iterable[Iterable[ResultTokenInfo]]:
+def create_sentences_info(matching_sentences, query_info, db_path) -> Iterable[ResultInfo]:
     """
     Возращает список со списком TokenInfo для каждого предложения
     TokenInfo - датакласс с полями: token, color, pos, lemma
@@ -96,7 +103,8 @@ def create_sentences_info(matching_sentences, query_info, db_path) -> Iterable[I
     query_lemmas_with_colors = {l: query_info.tokens[i].color for i, l in enumerate(query_info.lemmatized.split(' '))}
     db = DBHandler(db_path)
     for sent in matching_sentences:
-        sent_info = []
+        sent_info = ResultInfo(youtube_link=sent.link)
+        sent_info.tokens = []
         sent_annot = db.get_grammar_annotation(sent.id)
         for i, token_annot in enumerate(sent_annot):
             if token_annot[1] == 'PUNCT':
@@ -109,8 +117,14 @@ def create_sentences_info(matching_sentences, query_info, db_path) -> Iterable[I
                         token_info.lemma = token_annot[2] + sent_annot[i + 1][2]
                 if token_annot[2] in query_lemmas_with_colors:
                     token_info.color = query_lemmas_with_colors[token_annot[2]]
-            sent_info.append(token_info)
+            sent_info.tokens.append(token_info)
         sentences.append(sent_info)
 
     return sentences
 
+
+def create_full_link(video_link, timecode):
+    if video_link and timecode:
+        start = timecode.split(' ')[0]
+        return video_link + '&t=' + start + 's'
+    return
