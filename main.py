@@ -27,8 +27,8 @@ def result():
     query_info = create_query_info(user_request, nlp, DB_PATH)
 
     db = DBHandler(DB_PATH)
-    selected_sentences = db.select_sentences(query_info.lemmatized.split(' '))
 
+    selected_sentences = db.select_sentences(query_info.lemmatized.split(' '))
     SentenceInfo = namedtuple('SentenceInfo', ['id', 'sent', 'lemmatized', 'link'])
     selected_sentences = [SentenceInfo(s[0], s[1], s[2], create_full_link(s[3], s[4])) for s in selected_sentences]
     matching_sentences = filter_selected_sentences(selected_sentences, query_info.lemmatized.split(' '))

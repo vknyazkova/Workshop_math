@@ -1,5 +1,5 @@
 import sqlite3
-from collections import namedtuple
+
 
 
 class DBHandler:
@@ -15,12 +15,12 @@ class DBHandler:
 
     def select_sentences(self, lemmatized_request):
         pattern = '%' + '%'.join(lemmatized_request) + '%'
-        self.cur.execute('''SELECT id, sent, lemmatized
+        self.cur.execute('''SELECT sents.id, sents.sent, sents.lemmatized, texts.youtube_link, sents.timecode
                             FROM sents
-                            WHERE lemmatized LIKE ?''', (pattern,))
-        res = self.cur.fetchall()
-        SentenceInfo = namedtuple('SentenceInfo', ['id', 'sent', 'lemmatized'])
-        return [SentenceInfo(*row) for row in res]
+                            LEFT JOIN texts
+                                ON texts.id = sents.text_id
+                            WHERE sents.lemmatized LIKE ?''', (pattern,))
+        return self.cur.fetchall()
 
     def get_math_info(self, lemma):
         lemma = lemma.lower()
