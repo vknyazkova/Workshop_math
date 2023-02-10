@@ -1,8 +1,7 @@
 import sqlite3
 
 
-
-class DBHandler:
+class WebDBHandler:
     conn = None
     cur = None
 

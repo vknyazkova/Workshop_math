@@ -1,9 +1,9 @@
 import re
 from translate import Translator
 from typing import Iterable
-from database import DBHandler
+from website.backend.database import WebDBHandler
 
-from custom_dataclasses import ResultInfo, ResultTokenInfo, QueryInfo, QueryTokenInfo
+from website.backend.custom_dataclasses import ResultInfo, ResultTokenInfo, QueryInfo, QueryTokenInfo
 
 
 def create_query_info(user_request: str, spacy_lm, db_path: str) -> QueryInfo:
@@ -19,7 +19,7 @@ def create_query_info(user_request: str, spacy_lm, db_path: str) -> QueryInfo:
     lemmas = []
     poses = []
 
-    db = DBHandler(db_path)
+    db = WebDBHandler(db_path)
     pics_list = db.get_math_pics()
 
     for t in spacy_lm(user_request):
@@ -62,7 +62,7 @@ def create_sentences_info(matching_sentences, query_info: QueryInfo, db_path) ->
 
     sentences = []
     query_lemmas_with_colors = {l: query_info.tokens[i].color for i, l in enumerate(query_info.lemmatized.split(' '))}
-    db = DBHandler(db_path)
+    db = WebDBHandler(db_path)
 
     for sent in matching_sentences:
         sent_info = ResultInfo(youtube_link=sent.link)
