@@ -14,13 +14,13 @@ DB_PATH = os.path.abspath('math_corpus_database.db')
 
 @app.route('/')
 def main_page():
-    return render_template('index.html')
+    return render_template('home.html')
 
 
 @app.route('/result', methods=['POST', 'GET'])
 def result():
     if request.method == "GET":
-        return render_template("index.html")
+        return render_template("home.html")
 
     user_request = request.form['text']
 
@@ -37,7 +37,7 @@ def result():
 
     print(query_info)
     print(sents_info)
-    return render_template('result.html', query_info=query_info, sents_info=sents_info)
+    return render_template('result1.html', query_info=query_info, sents_info=sents_info)
 
 
 if __name__ == '__main__':
