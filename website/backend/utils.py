@@ -69,14 +69,14 @@ def create_sentences_info(matching_sentences, query_info: QueryInfo, db_path) ->
         sent_info.tokens = []
         sent_annot = db.get_grammar_annotation(sent.id)
         for i, token_annot in enumerate(sent_annot):
-            if token_annot[1] == 'PUNCT':
+            if token_annot[0] in ',.?!':
                 continue
             else:
                 token_info = ResultTokenInfo(token=token_annot[0], pos=token_annot[1], lemma=token_annot[2])
                 if i + 1 < len(sent_annot):
-                    if sent_annot[i + 1][1] == 'PUNCT':  # приклеиваем запятые к словам
+                    if sent_annot[i + 1][0] in ',.?!':  # приклеиваем запятые к словам
                         token_info.token = token_annot[0] + sent_annot[i + 1][0]
-                        token_info.lemma = token_annot[2] + sent_annot[i + 1][2]
+                        token_info.lemma = token_annot[2]
                 if token_annot[2] in query_lemmas_with_colors:
                     if token_within_query(query_info.lemmatized, sent.lemmatized, i):
                         token_info.color = query_lemmas_with_colors[token_annot[2]]

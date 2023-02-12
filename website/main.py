@@ -14,6 +14,7 @@ DB_PATH = Path('./math_corpus_database.db').resolve()
 @app.route('/')
 def main_page():
     return redirect(url_for('main_page_r', lang = "en"))
+
 @app.route('/main_<lang>')
 def main_page_r(lang):
     return render_template('home.html', stat1="disabled", main_lan=lang)
@@ -51,21 +52,10 @@ def result_with_query(query, lang):
 
     sents_info = create_sentences_info(matching_sentences, query_info, DB_PATH)
 
-    print(query_info)
-    print(sents_info)
-    #считаю кол-во предложений
-    n = 0
-    if sents_info != []:
-        for i in sents_info:
-            n += 1
+    # print(query_info)
+    # print(sents_info)
 
-    #sent_info = ResultInfo для каждого предл(ResultTokenInfo для каждого слова + youtube_link)
-    #QueryTokenInfo = query_info.tokens[0]
-    #ResultInfo = sents_info[0].tokens
-    #ResultTokenInfo = ResultInfo[0]
-    #n = ResultTokenInfo
-
-    return render_template('result1.html', main_lan=lang, query_info=query_info, sents_info=sents_info)
+    return render_template('result.html', main_lan=lang, query_info=query_info, sents_info=sents_info)
 
 
 @app.route('/result_<lang>', methods=['POST', 'GET'])

@@ -16,7 +16,7 @@
         <span data-bs-toggle="tooltip" data-bs-placement="bottom" style= "color: {{word.color}}" title="Model: {{word.model}}">{{word.token}}</span>
         {%endfor%}
     </p><br><br>
-    <p data-ru="Примеров найдено: {{ len(sents_info) }}" data-en="Found examples: {{ len(sents_info) }}"></p>
+    <p data-ru="Примеров найдено: {{ sents_info|length }}" data-en="Found examples: {{ sents_info|length }}"></p>
     <ul class="list-group" style="margin-bottom: 5%">
         {% for ResultInfo in sents_info %}
         <li class="list-group-item res-table" style="border-radius: 10px;">
