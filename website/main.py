@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 import spacy
 from pathlib import Path
 from collections import namedtuple
@@ -11,21 +11,36 @@ app = Flask(__name__)
 nlp = spacy.load('ru_core_news_sm')
 DB_PATH = Path('./math_corpus_database.db').resolve()
 
-
 @app.route('/')
 def main_page():
-    print(DB_PATH)
-    return render_template('home.html')
+    return redirect(url_for('main_page_r', lang = "en"))
+@app.route('/main_<lang>')
+def main_page_r(lang):
+    return render_template('home.html', stat1="disabled", main_lan=lang)
 
+@app.route('/about_<lang>')
+def about_page_r(lang):
+    return render_template('base.html', stat2 = "disabled", main_lan=lang)
 
-@app.route('/result', methods=['POST', 'GET'])
-def result():
-    if request.method == "GET":
-        return render_template("home.html")
+@app.route('/dictionary_<lang>')
+def dict_page_r(lang):
+    return render_template('base.html', stat3 = "disabled", main_lan=lang)
 
-    user_request = request.form['text']
+@app.route('/check_<lang>')
+def check_page_r(lang):
+    return render_template('base.html', stat4 = "disabled", main_lan=lang)
 
-    query_info = create_query_info(user_request, nlp, DB_PATH)
+@app.route('/login_<lang>')
+def login_r(lang):
+    return render_template('login.html', stat5 = "disabled", main_lan=lang)
+
+@app.route('/register_<lang>')
+def reg_page_r(lang):
+    return render_template('registration.html', stat6 = "disabled", main_lan=lang)
+
+@app.route('/result_<query>_<lang>', methods=['POST', 'GET'])
+def result_with_query(query, lang):
+    query_info = create_query_info(query, nlp, DB_PATH)
 
     db = WebDBHandler(DB_PATH)
 
@@ -38,7 +53,27 @@ def result():
 
     print(query_info)
     print(sents_info)
-    return render_template('result1.html', query_info=query_info, sents_info=sents_info)
+    #считаю кол-во предложений
+    n = 0
+    if sents_info != []:
+        for i in sents_info:
+            n += 1
+
+    #sent_info = ResultInfo для каждого предл(ResultTokenInfo для каждого слова + youtube_link)
+    #QueryTokenInfo = query_info.tokens[0]
+    #ResultInfo = sents_info[0].tokens
+    #ResultTokenInfo = ResultInfo[0]
+    #n = ResultTokenInfo
+
+    return render_template('result1.html', main_lan=lang, query_info=query_info, sents_info=sents_info, n=n)
+
+
+@app.route('/result_<lang>', methods=['POST', 'GET'])
+def result(lang):
+    user_request = request.form['text']
+    if user_request == "":
+        return render_template('home.html', stat1="disabled", main_lan=lang)
+    return redirect(url_for('result_with_query', query = user_request, lang = lang))
 
 
 if __name__ == '__main__':
