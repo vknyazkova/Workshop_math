@@ -65,7 +65,7 @@ def result_with_query(query, lang):
     #ResultTokenInfo = ResultInfo[0]
     #n = ResultTokenInfo
 
-    return render_template('result1.html', main_lan=lang, query_info=query_info, sents_info=sents_info, n=n)
+    return render_template('result1.html', main_lan=lang, query_info=query_info, sents_info=sents_info)
 
 
 @app.route('/result_<lang>', methods=['POST', 'GET'])

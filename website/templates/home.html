@@ -1,35 +1,42 @@
 {% extends 'base.html' %}
 {% block content %}
-           <div class="row" >
-    <div class="container" style="margin-top: 18%">
-        <div class="row justify-content-center">
-            <div class="col-md-auto">
-                <h2>Your tool for finding mathematical formulas and expressions.</h2>
+<div class="row" style="margin-top: 10%">
+    <div class="container">
+
+            <div class="col-md-10 justify-content-center" style="width: fit-content; margin:auto">
+                <!-- data-ru="Тесты" data-en="Check knowledge">-->
+
+                <h2 data-ru="Ваш инструмент для поиска математических формул и выражений."
+                    data-en="Your tool for finding mathematical formulas and expressions."></h2>
                 <br><br>
-                <h5>Choose the type of your search query:</h5>
+                <h5 data-ru="Выберите тип вашего запроса:"
+                    data-en="Choose the type of your search query:"></h5>
             </div>
-        </div>
+
+        <div class="col-md-9 justify-content-center" style="margin: auto">
             <form name="radio" class="row justify-content-center" style="margin-top: 20px">
                 <div>
-                    <div class="col-6">
-                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                    <input type="radio" class="btn-check" name="options" id="option1" autocomplete="off" value="word">
-                    <label class="btn btn-opt-word" for="option1">By word</label>
 
-                    <input type="radio" class="btn-check" name="options" id="option2" autocomplete="off" value="formula">
-                    <label class="btn btn-opt-form" for="option2">By formula</label>
-                </div>
+                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group" style="margin-left: 25px">
+                        <input type="radio" class="btn-check" name="radio" id="option1" autocomplete="off" value="word" onclick = "checkWord()" checked>
+                        <label class="btn btn-opt-word" for="option1" data-ru="По словам" data-en="By word"></label>
+
+                        <input type="radio" class="btn-check" name="radio" id="option2" autocomplete="off" value="formula" onclick = "checkForm()">
+                        <label class="btn btn-opt-form" for="option2" data-ru="По формуле" data-en="By formula"></label>
+
                 </div>
                 </div>
             </form>
 
 
-                <form name="search" class="d-flex" method="post" action="/result" target="_blank">
-                    <input name="text" type="text" class="form-control form-control-lg" placeholder="">
-                    <button class="btn btn-outline-success btn-search" type="submit">Search</button>
+
+
+                <form name="{{main_lan}}_form" id="form" class="d-flex" method="post" action="/result_{{main_lan}}">
+                    <input name="text" id="input" type="text" class="form-control form-control-lg" placeholder="">
+                    <button class="btn btn-outline-success btn-search" id="google" type="submit" data-ru="Поиск" data-en="Search"></button>
                 </form>
 
-
+</div>
         </div>
 </div>
 <script>
@@ -47,10 +54,22 @@
         const request = new XMLHttpRequest;
         request.open('POST', 'result/${JSON.stringify(resultt)}')
         request.send()
+    }
+
 
 </script>
+
 <!--
-<h1 style="background-color: #ffffff">
+$(document).ready(function(){
+        $('#google').click(function(e) {
+        var inputvalue = $("#input").text();
+        window.location = window.location.href.replace(/\w+_[A-Za-z][A-Za-z]/i, "result_" + inputvalue + "_{{main_lan}}");
+    };
+    }
+
+
+<h1 lang="ru">
+тест
         Действие повести происходит на Земле предположительно в 1970-е годы в городке Хармонт, в выдуманной англоязычной стране[14].
 
 Примерно за 13 лет[15] до начала описываемых в книге событий в нескольких местах на земном шаре возникает шесть «зон» — областей, в которых начинают происходить странные явления, нарушающие известные законы физики. Зоны расположены вдоль плавной линии на поверхности Земли, проекции так называемого радианта Пильмана — точки, лежащей на прямой, соединяющей Землю и Денеб. Быстро выяснилось, что людям и животным проживать в Зонах очень опасно, и всё население было из них срочно эвакуировано. Территории Зон были обнесены ограждением, взяты под строгую охрану и официально стали предметом осторожного научного изучения. Также очень быстро обнаруживается, что в Зонах много артефактов непонятного предназначения. Некоторые из них весьма полезны — например, могут лечить болезни, некоторые просто странные игрушки, а некоторые — крайне опасны.
@@ -69,7 +88,9 @@
 
 Финал книги остаётся открытым — Артур погибает в «мясорубке», Рэдрик подползает к Шару, тщетно пытаясь сформулировать своё самое сокровенное желание. Он вспоминает всю свою искалеченную жизнь, пытается вспомнить что-то светлое, но не получается. В итоге он не может придумать ничего, кроме того, что воскликнул Артур за несколько секунд до своей смерти: «Счастье для всех, даром, и пусть никто не уйдёт обиженный!»
 </h1>
-
 -->
+
+
+
 
 {% endblock %}
