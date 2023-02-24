@@ -8,6 +8,8 @@ import re
 from bs4 import BeautifulSoup
 from dataclasses import dataclass
 from tqdm import tqdm
+from pathlib import Path
+
 from database import ParserDBHandler
 
 
@@ -28,16 +30,18 @@ class XML2Database:
     nlp = spacy.load("ru_core_news_sm")
     morph = pymorphy2.MorphAnalyzer(lang='ru')
 
-    def __init__(self, xml_file, database_path, textname=None):
+    def __init__(self, xml_filepath, database_path, textname=None):
 
-        with open(xml_file, 'r', encoding='utf-8') as f:
-            xml_file = f.read()
-        self.bs_data = BeautifulSoup(xml_file, "xml")
+        self.filepath = Path(xml_filepath)
+        with open(self.filepath, 'r', encoding='utf-8') as f:
+            xml_file_text = f.read()
+        self.bs_data = BeautifulSoup(xml_file_text, "xml")
         self.db = ParserDBHandler(database_path)
+        self.textname = textname
 
-        if not textname:
-            textname = re.search(r'Texts\/(.*?)\.txt',
-                                 self.bs_data.find('textfile').get_text()).group(1)
+        if not self.textname:
+            self.textname = self.filepath.stem
+
         self.text_id = self.db.add_text(textname)
 
     @staticmethod
