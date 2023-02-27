@@ -1,13 +1,9 @@
 import re
-from hashlib import pbkdf2_hmac
-import os
 from translate import Translator
 from typing import Iterable
-from website.backend.database import WebDBHandler
+from backend.database import WebDBHandler
 
-from website.backend.custom_dataclasses import ResultInfo, ResultTokenInfo, QueryInfo, QueryTokenInfo
-
-N_ITERS = 500
+from backend.custom_dataclasses import ResultInfo, ResultTokenInfo, QueryInfo, QueryTokenInfo
 
 
 def create_query_info(user_request: str, spacy_lm, db_path: str) -> QueryInfo:
@@ -73,14 +69,14 @@ def create_sentences_info(matching_sentences, query_info: QueryInfo, db_path) ->
         sent_info.tokens = []
         sent_annot = db.get_grammar_annotation(sent.id)
         for i, token_annot in enumerate(sent_annot):
-            if token_annot[0] in ',.?!':
+            if token_annot[1] == 'PUNCT':
                 continue
             else:
                 token_info = ResultTokenInfo(token=token_annot[0], pos=token_annot[1], lemma=token_annot[2])
                 if i + 1 < len(sent_annot):
-                    if sent_annot[i + 1][0] in ',.?!':  # приклеиваем запятые к словам
+                    if sent_annot[i + 1][1] == 'PUNCT':  # приклеиваем запятые к словам
                         token_info.token = token_annot[0] + sent_annot[i + 1][0]
-                        token_info.lemma = token_annot[2]
+                        token_info.lemma = token_annot[2] + sent_annot[i + 1][2]
                 if token_annot[2] in query_lemmas_with_colors:
                     if token_within_query(query_info.lemmatized, sent.lemmatized, i):
                         token_info.color = query_lemmas_with_colors[token_annot[2]]
@@ -118,24 +114,3 @@ def token_within_query(query_lemmatized: str, sentence_lemmatized: str, i) -> bo
         if i_token_char_start >= m.start() and i_token_char_end <= m.end():
             return True
     return False
-
-
-def hash_password(password, salt=None):
-    if not salt:
-        salt = os.urandom()
-    password = bytes(password)
-    dk = pbkdf2_hmac('sha256', password, salt, N_ITERS)
-    return dk.hex(), salt
-
-
-def login(username, password, db_path):
-    db = WebDBHandler(db_path)
-    db_hash, db_salt = db.get_user_password(username)
-    if db_hash:
-        entered_password, _ = hash_password(password, salt=db_salt)
-        if entered_password == db_hash:
-            return True
-        else:
-            return False
-    else:
-        return False

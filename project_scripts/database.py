@@ -7,7 +7,6 @@ class ParserDBHandler:
 
     def __init__(self, db_path):
         self.conn = sqlite3.connect(db_path, check_same_thread=False)
-        self.conn.execute("PRAGMA foreign_keys = 1")
         self.cur = self.conn.cursor()
 
     def __del__(self):
@@ -149,9 +148,4 @@ class ParserDBHandler:
         self.cur.execute('''UPDATE texts
                             SET youtube_link = (?)
                             WHERE id = (?)''', (link, text_id))
-        self.conn.commit()
-        
-    def delete_text(self, text_id):
-        self.cur.execute('''DELETE FROM texts
-                            WHERE id = (?)''', (text_id,))
         self.conn.commit()
