@@ -11,33 +11,41 @@ app = Flask(__name__)
 nlp = spacy.load('ru_core_news_sm')
 DB_PATH = Path('./math_corpus_database.db').resolve()
 
+
 @app.route('/')
 def main_page():
     return redirect(url_for('main_page_r', lang = "en"))
+
 
 @app.route('/main_<lang>')
 def main_page_r(lang):
     return render_template('home.html', stat1="disabled", main_lan=lang)
 
+
 @app.route('/about_<lang>')
 def about_page_r(lang):
-    return render_template('base.html', stat2 = "disabled", main_lan=lang)
+    return render_template('base.html', stat2="disabled", main_lan=lang)
+
 
 @app.route('/dictionary_<lang>')
 def dict_page_r(lang):
-    return render_template('base.html', stat3 = "disabled", main_lan=lang)
+    return render_template('base.html', stat3="disabled", main_lan=lang)
+
 
 @app.route('/check_<lang>')
 def check_page_r(lang):
-    return render_template('base.html', stat4 = "disabled", main_lan=lang)
+    return render_template('base.html', stat4="disabled", main_lan=lang)
 
-@app.route('/login_<lang>')
+
+@app.route('/login_<lang>', methods=['POST', 'GET'])
 def login_r(lang):
-    return render_template('login.html', stat5 = "disabled", main_lan=lang)
+    return render_template('login.html', stat5="disabled", main_lan=lang)
+
 
 @app.route('/register_<lang>')
 def reg_page_r(lang):
-    return render_template('registration.html', stat6 = "disabled", main_lan=lang)
+    return render_template('registration.html', stat6="disabled", main_lan=lang)
+
 
 @app.route('/result_<query>_<lang>', methods=['POST', 'GET'])
 def result_with_query(query, lang):

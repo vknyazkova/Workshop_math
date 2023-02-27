@@ -58,3 +58,24 @@ class WebDBHandler:
                             WHERE tokens.sent_id = (?)
                             ORDER BY tokens.word_in_sent''', (sent_id, ))
         return self.cur.fetchall()
+
+    def get_user_password(self, username):
+        self.cur.execute('''SELECT password, salt
+                            FROM users
+                            WHERE users.username == (?)''', (username,))
+        self.cur.fetchone()
+
+    def add_user(self, username, password, salt):
+        self.cur.execute('''INSERT INTO users 
+                            VALUES (?, ?, ?)''', (username, password, salt))
+        self.conn.commit()
+
+    def validate(self, username):
+        self.cur.execute('''SELECT username
+                            FROM users
+                            WHERE username = (?)''', (username,))
+        res = self.cur.fetchone()
+        if res:
+            return True
+        else:
+            return False
