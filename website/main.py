@@ -32,6 +32,13 @@ def start_page():
 
 @app.route('/main_<lang>')
 def main_page(lang):
+
+    # # инфа по частеречным тегам
+    # db = WebDBHandler(DB_PATH)
+    # poses = db.get_pos_tags()
+    # # tag, description, examples
+    # print(poses)
+
     return render_template('home.html', main_lan=lang)
 
 
@@ -88,8 +95,9 @@ def login(lang):
             if user.validate_password(request.form['password']):
                 login_user(user, remember=True)
                 flask.flash(f'User {user.username} have logged in')
+                # nextp = request.args.get('next')
                 return render_template('home.html', main_lan=lang)
-                # return flask.redirect(nextp or flask.url_for('main'))
+                # return flask.redirect(nextp or flask.url_for('main_page'))
     return render_template('login.html', main_lan=lang)
 
 

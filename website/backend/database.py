@@ -75,3 +75,8 @@ class WebDBHandler:
         self.cur.execute('''INSERT INTO users (username, password, salt)
                               VALUES (?, ?, ?)''', (username, password, salt))
         self.conn.commit()
+
+    def get_pos_tags(self):
+        self.cur.execute('''SELECT name, description, examples
+                            FROM pos''')
+        return self.cur.fetchall()
