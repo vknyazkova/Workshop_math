@@ -1,9 +1,10 @@
 import re
 from translate import Translator
 from typing import Iterable
-from backend.database import WebDBHandler
 
-from backend.custom_dataclasses import ResultInfo, ResultTokenInfo, QueryInfo, QueryTokenInfo
+from website.backend.database import WebDBHandler
+
+from website.backend.custom_dataclasses import ResultInfo, ResultTokenInfo, QueryInfo, QueryTokenInfo
 
 
 def create_query_info(user_request: str, spacy_lm, db_path: str) -> QueryInfo:

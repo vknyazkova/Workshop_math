@@ -1,26 +1,28 @@
+import flask
 from flask import Flask, render_template, request, redirect, url_for
-# from flask_login import LoginManager
-import spacy
+from flask_login import LoginManager, login_user, logout_user, current_user
 from pathlib import Path
 from collections import namedtuple
 
+import spacy
+
 from backend.utils import filter_selected_sentences, create_query_info, create_sentences_info, create_full_link
 from backend.database import WebDBHandler
-# from user import User
+from user import User
 from secret import FLASK_SECRET_KEY
 
 
 app = Flask(__name__)
 app.secret_key = FLASK_SECRET_KEY
-# login_manager = LoginManager()
-# login_manager.init_app(app)
+login_manager = LoginManager(app)
+
 nlp = spacy.load('ru_core_news_sm')
 DB_PATH = Path('./math_corpus_database.db').resolve()
 
 
-# @login_manager.user_loader
-# def load_user(user_id):
-#     return User.get(user_id)
+@login_manager.user_loader
+def load_user(user_id):
+    return User(DB_PATH).get(user_id)
 
 
 @app.route('/')
@@ -35,7 +37,7 @@ def main_page(lang):
 
 @app.route('/result_<lang>', methods=['POST', 'GET'])
 def result(lang):
-    #временный костыль лишь бы работали кнопки
+    # временный костыль лишь бы работали кнопки
     if request.form['type'] == "By text":
         user_request = request.form['query']
     else:
@@ -52,7 +54,7 @@ def result_page(query, lang, ):
     selected_sentences = [SentenceInfo(s[0], s[1], s[2], create_full_link(s[3], s[4])) for s in selected_sentences]
     matching_sentences = filter_selected_sentences(selected_sentences, query_info.lemmatized.split(' '))
     sents_info = create_sentences_info(matching_sentences, query_info, DB_PATH)
-    print(query_info)
+    # print(query_info)
     # print(sents_info)
     return render_template('result.html', main_lan=lang, query_info=query_info, sents_info=sents_info)
 
@@ -69,20 +71,37 @@ def check_page(lang):
 
 @app.route('/account_<lang>', methods=['POST', 'GET'])
 def account(lang):
-    not_authorised = True
-    if not_authorised:
+    if not current_user.is_authenticated:
         return redirect(url_for('login', lang=lang))
-    #придумать систему авторизации
+    else:
+        print(current_user.username)
     return render_template('account.html', main_lan=lang)
 
 
-@app.route('/login_<lang>')
+@app.route('/login_<lang>', methods=['GET', 'POST'])
 def login(lang):
+    if request.method == 'POST':
+        un = request.form['username']
+        print(un)
+        user = User(DB_PATH).get(un)
+        if user:
+            if user.validate_password(request.form['password']):
+                login_user(user, remember=True)
+                flask.flash(f'User {user.username} have logged in')
+                return render_template('home.html', main_lan=lang)
+                # return flask.redirect(nextp or flask.url_for('main'))
     return render_template('login.html', main_lan=lang)
 
 
-@app.route('/register_<lang>')
+@app.route('/register_<lang>', methods=['GET', 'POST'])
 def reg_page(lang):
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        hashed_password, salt = User.hash_password(password)
+        db = WebDBHandler(DB_PATH)
+        db.add_user(username, hashed_password, salt)
+        flask.flash(f'Registration is completed, now you can log in')
     return render_template('register.html', main_lan=lang)
 
 
