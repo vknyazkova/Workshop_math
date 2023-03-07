@@ -71,9 +71,9 @@ class WebDBHandler:
                             WHERE users.username == (?)''', (username,))
         self.cur.fetchone()
 
-    def add_user(self, username, password, salt):
-        self.cur.execute('''INSERT INTO users (username, password, salt)
-                              VALUES (?, ?, ?)''', (username, password, salt))
+    def add_user(self, username, password, salt, email):
+        self.cur.execute('''INSERT INTO users (username, password, salt, email)
+                              VALUES (?, ?, ?, ?)''', (username, password, salt, email))
         self.conn.commit()
 
     def get_pos_tags(self):

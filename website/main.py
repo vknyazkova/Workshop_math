@@ -81,22 +81,20 @@ def account(lang):
     if not current_user.is_authenticated:
         return redirect(url_for('login', lang=lang))
     else:
-        print(current_user.username)
-    return render_template('account.html', main_lan=lang)
+        return render_template('account.html', main_lan=lang, login=current_user.username, email=current_user.email)
 
 
 @app.route('/login_<lang>', methods=['GET', 'POST'])
 def login(lang):
     if request.method == 'POST':
         un = request.form['username']
-        print(un)
         user = User(DB_PATH).get(un)
         if user:
             if user.validate_password(request.form['password']):
                 login_user(user, remember=True)
                 flask.flash(f'User {user.username} have logged in')
                 # nextp = request.args.get('next')
-                return render_template('home.html', main_lan=lang)
+                return render_template('account.html', main_lan=lang, login=current_user.username, email=current_user.email)
                 # return flask.redirect(nextp or flask.url_for('main_page'))
     return render_template('login.html', main_lan=lang)
 
@@ -106,10 +104,12 @@ def reg_page(lang):
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        email = request.form['email']
         hashed_password, salt = User.hash_password(password)
         db = WebDBHandler(DB_PATH)
-        db.add_user(username, hashed_password, salt)
+        db.add_user(username, hashed_password, salt, email)
         flask.flash(f'Registration is completed, now you can log in')
+        return flask.redirect(flask.url_for('login', lang=lang))
     return render_template('register.html', main_lan=lang)
 
 

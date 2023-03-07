@@ -11,6 +11,7 @@ class User(flask_login.UserMixin, WebDBHandler):
 
     def __init__(self, db_path):
         WebDBHandler.__init__(self, db_path)
+        self.email = None
         self.salt = None
         self.password = None
         self.id = None
@@ -46,7 +47,7 @@ class User(flask_login.UserMixin, WebDBHandler):
     def get(self, user_id):
         res = self.get_user_info(user_id)
         if res:
-            self.id, self.username, self.password, self.salt = res
+            self.id, self.username, self.password, self.salt, self.email = res
             return self
         else:
             return None
