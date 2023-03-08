@@ -25,15 +25,44 @@
                                 <div class="u-container-align-center u-container-style u-layout-cell u-size-14 u-layout-cell-2">
                                     <div class="u-container-layout u-container-layout-2">
                                         <h5 class="u-align-center u-text u-text-default u-text-3" data-ru="Формула:" data-en="Formula:"></h5>
-                                        <img class="u-image u-image-default u-preserve-proportions u-image-1" src="images/a.png" alt="" data-image-width="64" data-image-height="84">
+                                        <img class="u-image u-image-default u-preserve-proportions u-image-1" src="static/images/a.png" alt="" data-image-width="64" data-image-height="84">
                                     </div>
                                 </div>
+                                <!--
                                 <div class="u-container-style u-layout-cell u-size-46 u-layout-cell-3">
                                     <div class="u-container-layout u-container-layout-3">
                                         <h5 class="u-text u-text-default u-text-4" data-ru="Начальные формы:" data-en="Normal forms:"></h5>
                                         <p class="u-text u-text-default u-text-5">{{ query_info.lemmatized }}</p>
                                     </div>
                                 </div>
+                                 -->
+                                <div class="u-container-style u-layout-cell u-size-46 u-layout-cell-3">
+                    <div class="u-container-layout u-container-layout-3">
+                      <div class="u-expanded-width u-table u-table-responsive u-table-1">
+                        <table class="u-table-entity">
+                          <colgroup>
+                            <col width="auto">
+                            <col width="auto">
+                            <col width="auto">
+                          </colgroup>
+                          <tbody class="u-table-body u-table-body-1">
+                            <tr style="height: 68px;">
+                              <td class="u-border-1 u-border-custom-color-2 u-border-no-left u-border-no-right u-table-cell u-table-cell-1" data-en="Normal forms:" data-ru="Начальные формы:"></td>
+                                {% for word in query_info.tokens %}
+                                <td class="u-border-1 u-border-custom-color-2 u-border-no-left u-border-no-right u-table-cell u-table-cell-2" style="font-size: 1rem;">{{word.lemma}}</td>
+                              {%endfor%}
+                            </tr>
+                            <tr style="height: 68px;">
+                              <td class="u-border-1 u-border-custom-color-2 u-border-no-left u-border-no-right u-table-cell u-table-cell-4" data-en="POS" data-ru="Часть речи"></td>
+                                {% for word in query_info.tokens %}
+                                <td class="u-border-1 u-border-custom-color-2 u-border-no-left u-border-no-right u-table-cell u-table-cell-5" style="font-size: 1rem;">{{word.pos}}</td>
+                              {%endfor%}
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
                             </div>
                         </div>
                     </div>
@@ -53,7 +82,10 @@
                             {% for ResultTokenInfo in ResultInfo.tokens %}
                             <abbr class="tooltip tooltip--top" data-tooltip="{{ResultTokenInfo.pos}}">
                             <abbr class="tooltip tooltip--bottom {{ResultTokenInfo.color}}" data-tooltip="{{ResultTokenInfo.lemma}}">{{ResultTokenInfo.token}}</abbr></abbr>
-                              {%endfor%}</p>
+                              {%endfor%}
+                            {% if ResultInfo.youtube_link %}
+                            <img class="u-image u-image-default u-preserve-proportions u-image-1" src="static/images/yt.png" href="{{ResultInfo.youtube_link}}" height="16px" width="20px">
+                            {% endif %}</p>
                         </div>
                     </div>
                 {%endfor%}
