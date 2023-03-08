@@ -32,13 +32,6 @@ def start_page():
 
 @app.route('/main_<lang>')
 def main_page(lang):
-
-    # # инфа по частеречным тегам
-    # db = WebDBHandler(DB_PATH)
-    # poses = db.get_pos_tags()
-    # # tag, description, examples
-    # print(poses)
-
     return render_template('home.html', main_lan=lang)
 
 
@@ -61,8 +54,8 @@ def result_page(query, lang, ):
     selected_sentences = [SentenceInfo(s[0], s[1], s[2], create_full_link(s[3], s[4])) for s in selected_sentences]
     matching_sentences = filter_selected_sentences(selected_sentences, query_info.lemmatized.split(' '))
     sents_info = create_sentences_info(matching_sentences, query_info, DB_PATH)
-    # print(query_info)
-    # print(sents_info)
+    print(query_info)
+    #print(sents_info)
     return render_template('result.html', main_lan=lang, query_info=query_info, sents_info=sents_info)
 
 
@@ -115,7 +108,37 @@ def reg_page(lang):
 
 @app.route('/help_<lang>')
 def help(lang):
-    return render_template('base.html', main_lan=lang)
+    def SortTuple(tup):
+        tup.sort(key=lambda x: x[0])
+        return tup
+    # инфа по частеречным тегам
+    db = WebDBHandler(DB_PATH)
+    poses = SortTuple(db.get_pos_tags())
+    # tag, description, examples
+    #print(poses)
+    pos_eng = {
+        "NOUN": ["noun", "https://universaldependencies.org/u/pos/NOUN.html"],
+        "ADP": ["adposition", "https://universaldependencies.org/u/pos/ADP.html"],
+        "ADJ": ["adjective", "https://universaldependencies.org/u/pos/ADJ.html"],
+        "PUNCT": ["punctuation", "https://universaldependencies.org/u/pos/PUNCT.html"],
+        "PROPN": ["proper noun", "https://universaldependencies.org/u/pos/PROPN.html"],
+        "CCONJ": ["coordinating conjunction", "https://universaldependencies.org/u/pos/CCONJ.html"],
+        "VERB": ["verb", "https://universaldependencies.org/u/pos/VERB.html"],
+        "DET": ["determinative", "https://universaldependencies.org/u/pos/DET.html"],
+        "PRON": ["pronoun", "https://universaldependencies.org/u/pos/PRON.html"],
+        "ADV": ["adverb", "https://universaldependencies.org/u/pos/ADV.html"],
+        "SCONJ": ["subordinating conjunction", "https://universaldependencies.org/u/pos/SCONJ.html"],
+        "X": ["undenified", "https://universaldependencies.org/u/pos/X.html"],
+        "NUM": ["numeral", "https://universaldependencies.org/u/pos/NUM.html"],
+        "AUX": ["auxilary", "https://universaldependencies.org/u/pos/AUX_.html"],
+        "PTCP (VERB)" : ["participle", "https://universaldependencies.org/ru/feat/VerbForm.html#part-participle"],
+        "GRD (VERB)": ["gerund", "https://universaldependencies.org/ru/feat/VerbForm.html#conv-converb"],
+        'PART': ["particle", "https://universaldependencies.org/u/pos/PART.html"]
+    }
+    #print(pos_eng["NOUN"][1])
+    example_email = "mathematicon@gmail.com"
+    example_tg_account = "@mathematicon"
+    return render_template('help.html', main_lan=lang, POS_tags=poses, example_email=example_email, example_tg_account=example_tg_account, pos_eng=pos_eng)
 
 
 @app.route('/reset_<lang>')
