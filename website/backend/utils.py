@@ -28,6 +28,8 @@ def create_query_info(user_request: str, spacy_lm, db_path: str) -> QueryInfo:
         poses.append(t.pos_)
         token_info = QueryTokenInfo(token=t.text)
         math_info = db.get_math_info(t.lemma_)
+        token_info.pos = t.pos_
+        token_info.lemma = t.lemma_
         if math_info:
             features, model = math_info
             if model:

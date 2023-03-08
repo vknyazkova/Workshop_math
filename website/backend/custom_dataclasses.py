@@ -23,6 +23,8 @@ class QueryTokenInfo(TokenInfo):
 
     color: str = 'green'
     model: str = None
+    pos: str = None
+    lemma: str = None
 
 
 @dataclass
