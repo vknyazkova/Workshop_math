@@ -56,7 +56,7 @@ def result_page(query, lang, ):
     sents_info = create_sentences_info(matching_sentences, query_info, DB_PATH)
     print(query_info)
     #print(sents_info)
-    return render_template('result.html', main_lan=lang, query_info=query_info, sents_info=sents_info)
+    return render_template('result.html', main_lan=lang, query_info=query_info, sents_info=sents_info, query=query)
 
 
 @app.route('/dictionary_<lang>')
