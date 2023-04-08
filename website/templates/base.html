@@ -57,7 +57,7 @@
                             <ul class="u-align-center u-nav u-popupmenu-items u-unstyled u-nav-2"><li class="u-nav-item"><a class="u-button-style u-nav-link" href="/main_{{main_lan}}"><span data-ru="Главная" data-en="Main"></span></a></li>
                                 <li class="u-nav-item"><a class="u-button-style u-nav-link" href="/dictionary_{{main_lan}}"><span data-ru="Словарь" data-en="Dictionary"></span></a></li>
                                 <li class="u-nav-item"><a class="u-button-style u-nav-link" href="/check_{{main_lan}}"><span data-ru="Тесты" data-en="Check knowledge"></span></a></li>
-                                <li class="u-nav-item"><a class="u-button-style u-nav-link" href="/login_{{main_lan}}"><span data-ru="Аккаунт" data-en="Account"></span></a></li>
+                                <li class="u-nav-item"><a class="u-button-style u-nav-link" href="/account_{{main_lan}}"><span data-ru="Аккаунт" data-en="Account"></span></a></li>
                                 <li class="u-nav-item"><a class="u-button-style u-nav-link" href="/help_{{main_lan}}"><span data-ru="Помощь" data-en="Help"></span></a></li><!--
  <li>
                               <button class="u-active-custom-color-6 u-border-none u-btn u-btn-round u-button-style u-custom-color-5 u-hover-custom-color-6 u-radius-8 u-text-active-black u-btn-1 switchlang" data-lang="ru">ru</button>
@@ -82,6 +82,16 @@
             </div>
         </div>
     </header>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
 
 {% block content %}{% endblock %}
     <footer class="u-clearfix u-footer u-grey-80" id="sec-b67c">

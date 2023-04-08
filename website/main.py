@@ -1,8 +1,9 @@
 import flask
 from flask import Flask, render_template, request, redirect, url_for
-from flask_login import LoginManager, login_user, logout_user, current_user
+from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from pathlib import Path
 from collections import namedtuple
+from sqlite3 import IntegrityError
 
 import spacy
 
@@ -13,8 +14,10 @@ from secret import FLASK_SECRET_KEY
 
 
 app = Flask(__name__)
-app.secret_key = FLASK_SECRET_KEY
+app.config['SECRET_KEY'] = FLASK_SECRET_KEY
+
 login_manager = LoginManager(app)
+login_manager.init_app(app)
 
 nlp = spacy.load('ru_core_news_sm')
 DB_PATH = Path('./math_corpus_database.db').resolve()
@@ -49,13 +52,16 @@ def result(lang):
 def result_page(query, lang, ):
     query_info = create_query_info(query, nlp, DB_PATH)
     db = WebDBHandler(DB_PATH)
+
     selected_sentences = db.select_sentences(query_info.lemmatized.split(' '))
     SentenceInfo = namedtuple('SentenceInfo', ['id', 'sent', 'lemmatized', 'link'])
     selected_sentences = [SentenceInfo(s[0], s[1], s[2], create_full_link(s[3], s[4])) for s in selected_sentences]
     matching_sentences = filter_selected_sentences(selected_sentences, query_info.lemmatized.split(' '))
     sents_info = create_sentences_info(matching_sentences, query_info, DB_PATH)
-    print(query_info)
+
+    # print(query_info)
     #print(sents_info)
+
     return render_template('result.html', main_lan=lang, query_info=query_info, sents_info=sents_info, query=query)
 
 
@@ -85,11 +91,16 @@ def login(lang):
         if user:
             if user.validate_password(request.form['password']):
                 login_user(user, remember=True)
-                flask.flash(f'User {user.username} have logged in')
-                # nextp = request.args.get('next')
+                flask.flash(f'You\'ve been successfully logged-in')
                 return render_template('account.html', main_lan=lang, login=current_user.username, email=current_user.email)
-                # return flask.redirect(nextp or flask.url_for('main_page'))
     return render_template('login.html', main_lan=lang)
+
+
+@app.route("/logout_<lang>")
+@login_required
+def logout(lang):
+    logout_user()
+    return redirect(flask.url_for('main_page', lang=lang))
 
 
 @app.route('/register_<lang>', methods=['GET', 'POST'])
@@ -100,45 +111,27 @@ def reg_page(lang):
         email = request.form['email']
         hashed_password, salt = User.hash_password(password)
         db = WebDBHandler(DB_PATH)
-        db.add_user(username, hashed_password, salt, email)
-        flask.flash(f'Registration is completed, now you can log in')
-        return flask.redirect(flask.url_for('login', lang=lang))
+        try:
+            db.add_user(username, hashed_password, salt, email)
+            flask.flash('You\'ve been successfully logged-in')
+            user = User(DB_PATH).get(username)
+            login_user(user, remember=True)
+            return render_template('account.html', main_lan=lang, login=current_user.username, email=current_user.email)
+
+        except IntegrityError as e:  # если такой юзер уже есть в бд
+            dupl_field = str(e).split()[-1].split('.')[-1]
+            flask.flash(f'The user with this {dupl_field} already exists')
+            return redirect(flask.url_for('reg_page', lang=lang))
     return render_template('register.html', main_lan=lang)
 
 
 @app.route('/help_<lang>')
 def help(lang):
-    def SortTuple(tup):
-        tup.sort(key=lambda x: x[0])
-        return tup
-    # инфа по частеречным тегам
     db = WebDBHandler(DB_PATH)
-    poses = SortTuple(db.get_pos_tags())
-    # tag, description, examples
-    #print(poses)
-    pos_eng = {
-        "NOUN": ["noun", "https://universaldependencies.org/u/pos/NOUN.html"],
-        "ADP": ["adposition", "https://universaldependencies.org/u/pos/ADP.html"],
-        "ADJ": ["adjective", "https://universaldependencies.org/u/pos/ADJ.html"],
-        "PUNCT": ["punctuation", "https://universaldependencies.org/u/pos/PUNCT.html"],
-        "PROPN": ["proper noun", "https://universaldependencies.org/u/pos/PROPN.html"],
-        "CCONJ": ["coordinating conjunction", "https://universaldependencies.org/u/pos/CCONJ.html"],
-        "VERB": ["verb", "https://universaldependencies.org/u/pos/VERB.html"],
-        "DET": ["determinative", "https://universaldependencies.org/u/pos/DET.html"],
-        "PRON": ["pronoun", "https://universaldependencies.org/u/pos/PRON.html"],
-        "ADV": ["adverb", "https://universaldependencies.org/u/pos/ADV.html"],
-        "SCONJ": ["subordinating conjunction", "https://universaldependencies.org/u/pos/SCONJ.html"],
-        "X": ["undenified", "https://universaldependencies.org/u/pos/X.html"],
-        "NUM": ["numeral", "https://universaldependencies.org/u/pos/NUM.html"],
-        "AUX": ["auxilary", "https://universaldependencies.org/u/pos/AUX_.html"],
-        "PTCP (VERB)" : ["participle", "https://universaldependencies.org/ru/feat/VerbForm.html#part-participle"],
-        "GRD (VERB)": ["gerund", "https://universaldependencies.org/ru/feat/VerbForm.html#conv-converb"],
-        'PART': ["particle", "https://universaldependencies.org/u/pos/PART.html"]
-    }
-    #print(pos_eng["NOUN"][1])
+    poses = db.get_pos_tags()
     example_email = "mathematicon@gmail.com"
     example_tg_account = "@mathematicon"
-    return render_template('help.html', main_lan=lang, POS_tags=poses, example_email=example_email, example_tg_account=example_tg_account, pos_eng=pos_eng)
+    return render_template('help.html', main_lan=lang, POS_tags=poses, example_email=example_email, example_tg_account=example_tg_account)
 
 
 @app.route('/reset_<lang>')

@@ -17,6 +17,9 @@ class User(flask_login.UserMixin, WebDBHandler):
         self.id = None
         self.username = None
 
+    def __repr__(self):
+        return f'User {self.username}'
+
     def is_authenticated(self):
         return True
 
@@ -27,7 +30,7 @@ class User(flask_login.UserMixin, WebDBHandler):
         return False
 
     def get_id(self):
-        return str(self.id)
+        return str(self.username)
 
     @staticmethod
     def hash_password(password, salt=None):
@@ -44,8 +47,8 @@ class User(flask_login.UserMixin, WebDBHandler):
         else:
             return False
 
-    def get(self, user_id):
-        res = self.get_user_info(user_id)
+    def get(self, username):
+        res = self.get_user_by_uname(username)
         if res:
             self.id, self.username, self.password, self.salt, self.email = res
             return self
