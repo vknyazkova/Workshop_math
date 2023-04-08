@@ -29,14 +29,14 @@
                       <tr style="height: 70px;">
                         <td class="u-table-cell">
                             <p style="font-weight: 500; margin: 0;" data-ru="Часть речи:" data-en="POS tag:"></p>
-                            <p style="font-weight: 400; margin: 0; color: #6f6f6f;" data-ru="{{POS[0]}}" data-en="{{POS[0]}}"></p>
+                            <p style="font-weight: 400; margin: 0; color: #6f6f6f;" data-ru="{{ POS[0] }}" data-en="{{ POS[0] }}"></p>
                         </td>
                       </tr>
                       <tr style="height: 70px;">
                           <td class="u-table-cell">
                               <p style="font-weight: 500; margin: 0;" data-ru="Значение:" data-en="Meaning:"></p>
-                              <p style="font-weight: 400; margin: 0; color: #6f6f6f;" data-ru="{{POS[1]}}" data-en="{{POS[1]}}"></p>
-                              <a href="{{pos_eng[POS[0]][1]}}" data-ru=" {{pos_eng[POS[0]][0]}}" data-en=" {{pos_eng[POS[0]][0]}}"></a>
+{#                              <p style="font-weight: 400; margin: 0; color: #6f6f6f;" data-ru="{{ POS[1] }}" data-en="{{ POS[2] }}"></p>#}
+                              <a href="https://universaldependencies.org/{{ POS[4] }}" target="_blank" data-ru="{{ POS[1] }}" data-en="{{ POS[2] }}"></a>
                         </td>
                       </tr>
                     </tbody>
@@ -44,7 +44,7 @@
                       <tr style="height: 71px;">
                           <td class="u-border-3 u-border-custom-color-1 u-border-no-left u-border-no-right u-border-no-top u-table-cell" >
                               <p style="font-weight: 500; margin: 0;" data-ru="Примеры из русского языка:" data-en="Russian examples:"></p>
-                              <p style="font-weight: 400; margin: 0; color: #6f6f6f;" data-ru="{{POS[2]}}" data-en="{{POS[2]}}"></p>
+                              <p style="font-weight: 400; margin: 0; color: #6f6f6f;" data-ru="{{ POS[3] }}" data-en="{{ POS[3] }}"></p>
                         </td>
                       </tr>
                     </tfoot>

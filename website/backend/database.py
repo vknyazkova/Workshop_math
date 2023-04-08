@@ -59,7 +59,7 @@ class WebDBHandler:
                             ORDER BY tokens.word_in_sent''', (sent_id, ))
         return self.cur.fetchall()
 
-    def get_user_info(self, username):
+    def get_user_by_uname(self, username):
         self.cur.execute('''SELECT *
                             FROM users 
                             WHERE username = (?)''', (username, ))
@@ -77,6 +77,7 @@ class WebDBHandler:
         self.conn.commit()
 
     def get_pos_tags(self):
-        self.cur.execute('''SELECT name, description, examples
-                            FROM pos''')
+        self.cur.execute('''SELECT name, description_rus, description_eng, examples, UD_link
+                            FROM pos
+                            ORDER BY name''')
         return self.cur.fetchall()
