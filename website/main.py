@@ -92,7 +92,7 @@ def login(lang):
             if user.validate_password(request.form['password']):
                 login_user(user, remember=True)
                 flask.flash(f'You\'ve been successfully logged-in')
-                return render_template('account.html', main_lan=lang, login=current_user.username, email=current_user.email)
+                return redirect(url_for('account', lang=lang))
     return render_template('login.html', main_lan=lang)
 
 
