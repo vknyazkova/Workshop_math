@@ -1,96 +1,51 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="row" style="margin-top: 10%">
-    <div class="container">
-
-            <div class="col-md-10 justify-content-center" style="width: fit-content; margin:auto">
-                <!-- data-ru="Тесты" data-en="Check knowledge">-->
-
-                <h2 data-ru="Ваш инструмент для поиска математических формул и выражений."
-                    data-en="Your tool for finding mathematical formulas and expressions."></h2>
-                <br><br>
-                <h5 data-ru="Выберите тип вашего запроса:"
-                    data-en="Choose the type of your search query:"></h5>
+<link rel="stylesheet" href="static/css/home.css" media="screen">
+    <section class="u-clearfix u-custom-color-1 u-section-1" id="sec-a55f">
+        <div class="u-clearfix u-sheet u-sheet-1">
+            <div class="u-container-style u-custom-color-4 u-group u-radius-8 u-shape-round u-group-1">
+                <div class="u-container-layout u-container-layout-1">
+                    <h3 class="u-align-center u-text u-text-1"
+                        data-ru="Ваш инструмент для поиска математических выражений."
+                        data-en="Your tool for finding mathematical formulas and expressions."><br>
+                    </h3>
+                    <div class="u-align-center u-form u-form-1">
+                        <form action="/result_{{main_lan}}" method="POST" class="u-clearfix u-form-custom-backend u-form-spacing-13 u-form-vertical u-inner-form"  name="form" style="padding: 10px;">
+                            <div class="u-form-group u-form-input-layout-horizontal u-form-radiobutton u-label-top u-form-group-1">
+                                <label class="u-label u-label-1" data-en="Choose the type of your search query:" data-ru="Выберите тип поиска:"></label>
+                                <div class="u-form-radio-button-wrapper">
+                                    <div class="u-input-row">
+                                        <input type="radio" id="radio1" name="type" value="By text" checked="checked" required="required">
+                                        <label class="u-label u-label-2" for="radio1" data-en="By text" data-ru="По словам"></label>
+                                    </div>
+                                    <div class="u-input-row">
+                                        <input type="radio" id="radio2" name="type" value="By formula" required="required">
+                                        <label class="u-label u-label-3" for="radio2" data-en="By formula" data-ru="По формуле"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="u-form-group u-form-name u-label-top">
+                                <label for="name-6904" class="u-form-control-hidden u-label u-label-4"></label>
+                                <input type="text" id="name-6904" name="query" class="u-border-1 u-border-grey-30 u-input u-input-rectangle u-radius-8 u-white" required="">
+                            </div>
+                            <div class="u-align-center u-form-group u-form-submit u-label-top">
+                                <input type="submit" value="submit" class="u-form-control-hidden">
+                                <button class="u-border-none u-btn u-btn-round u-btn-submit u-button-style u-custom-color-5 u-hover-custom-color-6 u-radius-8 u-btn-1" data-en="Search" data-ru="Поиск"></button>
+                            </div>
+                            <div class="u-form-send-message u-form-send-success"> Спасибо! Ваше сообщение отправлено. </div>
+                            <div class="u-form-send-error u-form-send-message"> Отправка не удалась. Пожалуйста, исправьте ошибки и попробуйте еще раз. </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-
-        <div class="col-md-9 justify-content-center" style="margin: auto">
-            <form name="radio" class="row justify-content-center" style="margin-top: 20px">
-                <div>
-
-                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group" style="margin-left: 25px">
-                        <input type="radio" class="btn-check" name="radio" id="option1" autocomplete="off" value="word" onclick = "checkWord()" checked>
-                        <label class="btn btn-opt-word" for="option1" data-ru="По словам" data-en="By word"></label>
-
-                        <input type="radio" class="btn-check" name="radio" id="option2" autocomplete="off" value="formula" onclick = "checkForm()">
-                        <label class="btn btn-opt-form" for="option2" data-ru="По формуле" data-en="By formula"></label>
-
-                </div>
-                </div>
-            </form>
-
-
-
-
-                <form name="{{main_lan}}_form" id="form" class="d-flex" method="post" action="/result_{{main_lan}}">
-                    <input name="text" id="input" type="text" class="form-control form-control-lg" placeholder="">
-                    <button class="btn btn-outline-success btn-search" id="google" type="submit" data-ru="Поиск" data-en="Search"></button>
-                </form>
-
-</div>
         </div>
-</div>
-<script>
-    function checkWord(){
-        document.getElementById('option1').checked = true;
-    }
-    function checkForm(){
-        document.getElementById('option2').checked = true;
-    }
-    function getValue() {
-        var radio = document.querySelector('.check').checked;
-        let resultt = radio == true ? {"type":"word"} : {"type":"formula"};
-
-        s = JSON.stringify(resultt);
-        const request = new XMLHttpRequest;
-        request.open('POST', 'result/${JSON.stringify(resultt)}')
-        request.send()
-    }
-
-
-</script>
-
-<!--
-$(document).ready(function(){
-        $('#google').click(function(e) {
-        var inputvalue = $("#input").text();
-        window.location = window.location.href.replace(/\w+_[A-Za-z][A-Za-z]/i, "result_" + inputvalue + "_{{main_lan}}");
-    };
-    }
-
-
-<h1 lang="ru">
-тест
-        Действие повести происходит на Земле предположительно в 1970-е годы в городке Хармонт, в выдуманной англоязычной стране[14].
-
-Примерно за 13 лет[15] до начала описываемых в книге событий в нескольких местах на земном шаре возникает шесть «зон» — областей, в которых начинают происходить странные явления, нарушающие известные законы физики. Зоны расположены вдоль плавной линии на поверхности Земли, проекции так называемого радианта Пильмана — точки, лежащей на прямой, соединяющей Землю и Денеб. Быстро выяснилось, что людям и животным проживать в Зонах очень опасно, и всё население было из них срочно эвакуировано. Территории Зон были обнесены ограждением, взяты под строгую охрану и официально стали предметом осторожного научного изучения. Также очень быстро обнаруживается, что в Зонах много артефактов непонятного предназначения. Некоторые из них весьма полезны — например, могут лечить болезни, некоторые просто странные игрушки, а некоторые — крайне опасны.
-
-Предполагается, что Зоны созданы представителями внеземной цивилизации, и строится множество гипотез, по-разному объясняющих, что они собой представляют и каким образом нужны инопланетянам для контакта с жителями Земли. Один из героев книги, лауреат Нобелевской премии доктор Валентин Пильман, образно предполагает, что все артефакты — «пустышки», «этаки», «браслеты» — это всего лишь космический мусор, оставленный инопланетянами на планете Земля во время случайного посещения, сродни пустым банкам и бутылкам, забытым после человеческого пикника на обочине дороги.
-
-Одна из основных тем — нравственный выбор тех, в чьи руки попадают артефакты Зоны, то, как ими воспользуется человечество, которое, строго говоря, плохо понимает, в чём предназначение этих опасных вещей, неизвестно зачем оставленных пришельцами.
-
-Одна из Зон находится в черте города Хармонт. Главный герой книги Рэдрик Шухарт, житель Хармонта, становится сталкером, то есть зарабатывает на жизнь, вынося из Зоны артефакты, обладающие необычными свойствами и стоящие больших денег. Сюжет произведения складывается из отдельных эпизодов жизни Шухарта (в начале повести ему 23 года, в конце — 31). Большую часть жизни он был нелегальным сталкером, то есть преступником, в связи с чем сидел в тюрьме, хотя известно, что в молодости он работал лаборантом Хармонтского филиала Международного института внеземных культур.
-
-У сталкеров, как правило, рождались дети с многочисленными физическими и биологическими отклонениями от нормы, причины этой аномалии медицина найти не могла (в частности, радиации и химических токсикантов в атмосфере Зоны не было). Не избежала этой участи и единственная дочь Шухарта — Мария (домашнее прозвище Мартышка). Рэдрик любит жену и дочь, но заботиться о них постоянно у него не получается из-за частых отсидок. Тем не менее он не может отказаться от походов в Зону, разрушающую его жизнь (отчасти из-за желания получать большие деньги и не считать их, но главным образом — из-за магнетического притяжения Зоны, понятного только настоящему сталкеру). Только в Зоне он чувствует себя на своём месте и жить без неё уже не может.
-
-В конце книги Шухарт планирует и осуществляет свою заключительную миссию в Зоне: он решает найти «Золотой шар» — артефакт, который, согласно легенде, может выполнить самое сокровенное желание того, кто его обнаружит. Шухарт идёт к Шару, будучи глубоко разочарованным жизнью человеком, в последней надежде вылечить дочь. Сложность миссии состоит не только в том, что дорога к Шару смертельно опасна, но и в том, что последняя ловушка на пути к нему требует жертвы — одной человеческой жизни. И Шухарт приносит эту жертву в виде своего спутника, юноши, который напросился к нему в ученики — Артура Барбриджа.
-
-Отец Артура — старейший сталкер по прозвищу Стервятник, известный тем, что ходившие с ним в Зону часто не возвращались. У Барбриджа двое нормальных здоровых детей — исключение среди сталкеров. Барбридж по секрету сообщил Шухарту, что вымолил себе детей у Золотого шара. Сам он больше не может дойти до места, где находится артефакт, потеряв в Зоне обе ноги — тогда его вытащил на себе Рэдрик. Стервятник раскрыл Шухарту местонахождение Шара и расставленные на пути к нему ловушки, одна из которых требует «жертвоприношения» («мясорубка»), не только из благодарности — он надеется, что Шухарт сможет вернуть ему ноги.
-
-Финал книги остаётся открытым — Артур погибает в «мясорубке», Рэдрик подползает к Шару, тщетно пытаясь сформулировать своё самое сокровенное желание. Он вспоминает всю свою искалеченную жизнь, пытается вспомнить что-то светлое, но не получается. В итоге он не может придумать ничего, кроме того, что воскликнул Артур за несколько секунд до своей смерти: «Счастье для всех, даром, и пусть никто не уйдёт обиженный!»
-</h1>
--->
-
-
-
-
+    </section>
+    <section class="u-align-left u-clearfix u-custom-color-1 u-section-2" id="sec-618a">
+        <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
+            <div class="fr-view u-clearfix u-rich-text u-text u-text-1">
+                <h1 style="text-align: left;" data-ru="О корпусе" data-en="About corpus"></h1><br>
+                <p style="text-align: left;"><span style="line-height: 2.0;">Sample text. Click to select the text box. Click again or double click to start editing the text. Dictum non consectetur a erat nam at. Aliquam malesuada bibendum arcu vitae elementum curabitur vitae. Tellus mauris a diam maecenas sed enim ut sem. Ipsum faucibus vitae aliquet nec ullamcorper sit amet risus nullam. Pretium nibh ipsum consequat nisl vel pretium. In eu mi bibendum neque egestas congue. Vitae ultricies leo integer malesuada nunc. Nibh praesent tristique magna sit amet purus gravida. Diam volutpat commodo sed egestas. Gravida dictum fusce ut placerat orci nulla pellentesque.</span></p>
+            </div>
+        </div>
+    </section>
 {% endblock %}
