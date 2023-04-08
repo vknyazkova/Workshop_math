@@ -13,7 +13,7 @@
                                         <h1 class="u-text u-text-default u-text-1" data-en="Search:" data-ru="Поиск:"></h1>
                                         <h3 class="u-text u-text-default u-text-2">
                                           {% for word in query_info.tokens %}
-                                          <abbr class="tooltip tooltip--bottom {{word.color}}" data-tooltip="Model: {{word.model}}">{{word.token}}</abbr>
+                                          <abbr class="tooltip tooltip--bottom {{word.color}}" data-tooltip="Model: {{word.model}}">{{word.token}} </abbr>
                                           {%endfor%}
                                            <a class="u-border-none u-btn u-button-link u-button-style u-none u-text-active-custom-color-5 u-text-hover-custom-color-6 u-text-palette-3-base u-btn-2" onclick="makeSound()"><img src="static/images/speaker.png" width="auto" height="20px"></a>
                                         </h3>
