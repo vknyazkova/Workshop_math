@@ -62,6 +62,7 @@ def create_sentences_info(matching_sentences, query_info: QueryInfo, db_path) ->
 
     sentences = []
     query_lemmas_with_colors = {l: query_info.tokens[i].color for i, l in enumerate(query_info.lemmatized.split(' '))}
+    print(query_lemmas_with_colors)
     db = WebDBHandler(db_path)
 
     for sent in matching_sentences:
@@ -82,9 +83,16 @@ def create_sentences_info(matching_sentences, query_info: QueryInfo, db_path) ->
                         token_info.token = token_annot[0] + sent_annot[i + 1][0]
                         token_info.lemma = token_annot[2] + sent_annot[i + 1][2]
 
-                if token_annot[2] in query_lemmas_with_colors:
+                # очередной костыль, чтобы работать с деепричастиями и причастиями
+                lemma = re.split('[()]', token_annot[2])
+                if len(lemma) > 1:
+                    lemma = lemma[1].strip()
+                else:
+                    lemma = token_annot[2]
+
+                if lemma in query_lemmas_with_colors:
                     if token_within_query(query_info.lemmatized, sent.lemmatized, i):
-                        token_info.color = query_lemmas_with_colors[token_annot[2]]
+                        token_info.color = query_lemmas_with_colors[lemma]
 
                 if quotes:  # костыль чтобы кавычки нормально приклеивались...
                     token_info.token = quotes + token_info.token
