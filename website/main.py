@@ -54,6 +54,7 @@ def result_page(query, lang, ):
     db = WebDBHandler(DB_PATH)
 
     selected_sentences = db.select_sentences(query_info.lemmatized.split(' '))
+    # print(selected_sentences)
     SentenceInfo = namedtuple('SentenceInfo', ['id', 'sent', 'lemmatized', 'link'])
     selected_sentences = [SentenceInfo(s[0], s[1], s[2], create_full_link(s[3], s[4])) for s in selected_sentences]
     matching_sentences = filter_selected_sentences(selected_sentences, query_info.lemmatized.split(' '))
@@ -67,7 +68,7 @@ def result_page(query, lang, ):
 
 @app.route('/dictionary_<lang>')
 def dict_page(lang):
-    return render_template('base.html', main_lan=lang)
+    return render_template('dictionary.html', main_lan=lang)
 
 
 @app.route('/check_<lang>')
