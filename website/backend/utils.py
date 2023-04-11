@@ -2,16 +2,13 @@ import re
 from typing import Iterable
 
 from website.backend.database import WebDBHandler
-
 from website.backend.custom_dataclasses import ResultInfo, ResultTokenInfo, QueryInfo, QueryTokenInfo
 
 
 def create_query_info(user_request: str, spacy_lm, db_path: str) -> QueryInfo:
-    """Парсит запрос, переводит и возвращает всю информацию в виде экземпляра датакласса QueryInfo"""
+    """Парсит запрос и возвращает всю информацию в виде экземпляра датакласса QueryInfo"""
 
     query_info = QueryInfo(user_request)
-    # translator = Translator(to_lang="en", from_lang='ru')
-    # query_info.translation = translator.translate(user_request)
 
     query_info.tokens = []
     query_info.pictures = []
@@ -71,18 +68,28 @@ def create_sentences_info(matching_sentences, query_info: QueryInfo, db_path) ->
         sent_info = ResultInfo(youtube_link=sent.link)
         sent_info.tokens = []
         sent_annot = db.get_grammar_annotation(sent.id)
+        quotes = None
         for i, token_annot in enumerate(sent_annot):
+
             if token_annot[1] == 'PUNCT':
+                if ord(token_annot[2]) == 8220:
+                    quotes = token_annot[2]
                 continue
             else:
                 token_info = ResultTokenInfo(token=token_annot[0], pos=token_annot[1], lemma=token_annot[2])
                 if i + 1 < len(sent_annot):
-                    if sent_annot[i + 1][1] == 'PUNCT':  # приклеиваем запятые к словам
+                    if sent_annot[i + 1][2] in ',.:?”':  # приклеиваем запятые к словам
                         token_info.token = token_annot[0] + sent_annot[i + 1][0]
                         token_info.lemma = token_annot[2] + sent_annot[i + 1][2]
+
                 if token_annot[2] in query_lemmas_with_colors:
                     if token_within_query(query_info.lemmatized, sent.lemmatized, i):
                         token_info.color = query_lemmas_with_colors[token_annot[2]]
+
+                if quotes:  # костыль чтобы кавычки нормально приклеивались...
+                    token_info.token = quotes + token_info.token
+                    quotes = None
+
             sent_info.tokens.append(token_info)
         sentences.append(sent_info)
 
