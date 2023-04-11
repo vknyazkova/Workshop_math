@@ -41,7 +41,6 @@ class QueryInfo:
 
     text: str
     tokens: Iterable[QueryTokenInfo] = None
-    translation: str = None
     pos_string: str = None
     lemmatized: str = None
     pictures: list = None
