@@ -1,5 +1,4 @@
 import re
-from translate import Translator
 from typing import Iterable
 
 from website.backend.database import WebDBHandler
@@ -11,8 +10,8 @@ def create_query_info(user_request: str, spacy_lm, db_path: str) -> QueryInfo:
     """Парсит запрос, переводит и возвращает всю информацию в виде экземпляра датакласса QueryInfo"""
 
     query_info = QueryInfo(user_request)
-    translator = Translator(to_lang="en", from_lang='ru')
-    query_info.translation = translator.translate(user_request)
+    # translator = Translator(to_lang="en", from_lang='ru')
+    # query_info.translation = translator.translate(user_request)
 
     query_info.tokens = []
     query_info.pictures = []
@@ -53,6 +52,7 @@ def filter_selected_sentences(db_selected, user_request) -> Iterable[tuple]:
     """
 
     reg_ex = '\s?([А-Яа-яёЁ]+)?\s?'.join(user_request)
+    reg_ex = '\s' + reg_ex + '\s'  # чтобы не находились в середине слова
     filtered = []
     for sent in db_selected:
         if re.search(reg_ex, sent.lemmatized):
