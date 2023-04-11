@@ -66,11 +66,13 @@ class Text2DB:
         parsed = ParsedSentence(analysed_sent.text)
         first_word_in_sent = 0
 
+        lemmatized = []  # леммы без поправки на деепричастие и причастие
         for t in analysed_sent:
             parsed.tokens.append(t.text)
             parsed.deprels.append(t.dep_.lower())
 
             pos, lemma = Text2DB.specify_gram_annot(t)
+            lemmatized.append(t.lemma_)
             parsed.lemmas.append(lemma)
             parsed.poses.append(pos)
 
@@ -78,7 +80,7 @@ class Text2DB:
                 first_word_in_sent = t.i  # тк вся индексация с начала предложени
             parsed.head_id_in_sent.append(t.head.i - first_word_in_sent)
 
-        parsed.lemmatized_sent = ' '.join(parsed.lemmas)
+        parsed.lemmatized_sent = ' '.join(lemmatized)
         return parsed
 
     @staticmethod
