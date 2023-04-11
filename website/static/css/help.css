@@ -28,25 +28,39 @@
 }
 
 .u-section-1 .u-accordion-pane-1 {
-  min-height: 197px;
+  min-height: 231px;
   background-image: none;
   height: auto;
 }
 
 .u-section-1 .u-container-layout-1 {
-  padding: 30px;
+  padding: 30px 30px 37px;
 }
 
 .u-section-1 .u-text-2 {
   margin: 0;
 }
 
-.u-section-1 .u-table-1 {
-  margin-top: 30px;
-  margin-bottom: 0;
+.u-section-1 .u-line-1 {
+  width: 592px;
+  height: 0;
+  margin: 29px auto 0;
 }
 
-.u-block-b925-37 {
+.u-section-1 .u-table-1 {
+  width: 710px;
+  margin: 29px auto 0;
+}
+
+.u-block-b925-58 {
+  height: 46px;
+}
+
+.u-section-1 .u-table-body-1 {
+  line-height: 0.8;
+}
+
+.u-block-b925-70 {
   height: 46px;
 }
 
@@ -67,7 +81,7 @@
 }
 
 .u-section-1 .u-accordion-pane-2 {
-  min-height: 197px;
+  min-height: 231px;
   background-image: none;
   height: auto;
 }
@@ -104,7 +118,7 @@
 }
 
 .u-section-1 .u-accordion-pane-3 {
-  min-height: 197px;
+  min-height: 231px;
   background-image: none;
   height: auto;
 }
@@ -135,7 +149,7 @@
 }
 
 .u-section-1 .u-accordion-pane-4 {
-  min-height: 197px;
+  min-height: 231px;
   background-image: none;
   height: auto;
 }
@@ -148,20 +162,17 @@
   margin: 0;
 }
 
-.pos-style-name {
-font-weight: 500;
-color: #6f6f6f;
-margin: 0;
-}
-
-.pos-style-example {
-font-weight: 400;
-margin: 0;
-}
-
 @media (max-width: 991px) {
   .u-section-1 .u-accordion-1 {
     width: 720px;
+  }
+
+  .u-section-1 .u-container-layout-1 {
+    padding-bottom: 30px;
+  }
+
+  .u-section-1 .u-table-1 {
+    width: 660px;
   }
 
   .u-section-1 .u-text-3 {
@@ -172,6 +183,14 @@ margin: 0;
 @media (max-width: 767px) {
   .u-section-1 .u-accordion-1 {
     width: 540px;
+  }
+
+  .u-section-1 .u-line-1 {
+    width: 520px;
+  }
+
+  .u-section-1 .u-table-1 {
+    width: 520px;
   }
 
   .u-section-1 .u-container-layout-2 {
@@ -187,6 +206,14 @@ margin: 0;
 @media (max-width: 575px) {
   .u-section-1 .u-accordion-1 {
     width: 340px;
+  }
+
+  .u-section-1 .u-line-1 {
+    width: 320px;
+  }
+
+  .u-section-1 .u-table-1 {
+    width: 320px;
   }
 
   .u-section-1 .u-text-3 {
