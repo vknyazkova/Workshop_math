@@ -102,10 +102,46 @@ class ParserDBHandler:
         #         print(sentence)
         return self.cur.fetchone()[0]
 
+    # def add_math_annotation(self, annotation):
+    #     """:param annotation: [{
+    #         'sentence': str,
+    #         'segment_text': str,
+    #         'char_start': int,
+    #         'char_end': int,
+    #         'annot': str,
+    #         'govern_model': str}
+    #         }]"""
+    #
+    #     annot = list(set([an['annot'] for an in annotation]))
+    #     self.add_math_tags(annot)
+    #     govern_models = list(set([an['govern_model'] for an in annotation if an['govern_model']]))
+    #     self.add_govern_models(govern_models)
+    #
+    #     sent_ids = {}
+    #     for annot in annotation:
+    #         if not sent_ids.get(annot['sentence']):
+    #             sent_ids[annot['sentence']] = self.get_sent_id(annot['sentence'])
+    #         annot['sentence_id'] = sent_ids[annot['sentence']]
+    #
+    #     self.cur.executemany('''INSERT INTO math_annotation (feature_id, govern_model_id, id_token_start, id_token_end)
+    #                             SELECT math_tags.id,
+    #                             (SELECT govern_models.id FROM govern_models WHERE govern_models.model = :govern_model),
+    #                             (SELECT tokens.id FROM tokens
+    #                             WHERE tokens.char_start >= :char_start AND tokens.char_end <= :char_end AND tokens.sent_id = :sentence_id
+    #                             ORDER BY tokens.word_in_sent
+    #                             LIMIT 1),
+    #                             (SELECT tokens.id FROM tokens
+    #                             WHERE tokens.char_start >= :char_start AND tokens.char_end <= :char_end AND tokens.sent_id = :sentence_id
+    #                             ORDER BY tokens.word_in_sent DESC
+    #                             LIMIT 1)
+    #                         FROM math_tags
+    #                         WHERE math_tags.feature = :annot''', annotation)
+    #     self.conn.commit()
+
     def add_math_annotation(self, annotation):
         """:param annotation: [{
             'sentence': str,
-            'segment_text': str,
+            'seg_text': str,
             'char_start': int,
             'char_end': int,
             'annot': str,
@@ -123,8 +159,11 @@ class ParserDBHandler:
                 sent_ids[annot['sentence']] = self.get_sent_id(annot['sentence'])
             annot['sentence_id'] = sent_ids[annot['sentence']]
 
-        self.cur.executemany('''INSERT INTO math_annotation (feature_id, govern_model_id, id_token_start, id_token_end)
-                                SELECT math_tags.id, 
+        # print(annotation)
+        self.cur.executemany('''INSERT INTO math_annotation (annot_text, feature_id, govern_model_id, id_token_start, id_token_end)
+                                VALUES (
+                                :segment_text,
+                                (SELECT math_tags.id FROM math_tags WHERE math_tags.feature = :annot), 
                                 (SELECT govern_models.id FROM govern_models WHERE govern_models.model = :govern_model),
                                 (SELECT tokens.id FROM tokens 
                                 WHERE tokens.char_start >= :char_start AND tokens.char_end <= :char_end AND tokens.sent_id = :sentence_id
@@ -134,8 +173,8 @@ class ParserDBHandler:
                                 WHERE tokens.char_start >= :char_start AND tokens.char_end <= :char_end AND tokens.sent_id = :sentence_id
                                 ORDER BY tokens.word_in_sent DESC
                                 LIMIT 1)
-                            FROM math_tags
-                            WHERE math_tags.feature = :annot''', annotation)
+                                )
+                            ''', annotation)
         self.conn.commit()
 
     def change_text_status(self, text_id, new_status):

@@ -22,22 +22,22 @@ class WebDBHandler:
         return self.cur.fetchall()
 
     def get_math_info(self, lemma):
+        """TO DO:
+        Исправить полностью эту функцию"""
         lemma = lemma.lower()
-        self.cur.execute('''WITH tokenid AS (
-                                SELECT grammar_annotation.token_id 
-                                FROM grammar_annotation
-                                LEFT JOIN lemmas
-                                    ON lemmas.id = grammar_annotation.lemma_id
-                                WHERE lemmas.name = (?)
-                                LIMIT 1) 
-                            SELECT math_tags.feature, govern_models.model
+        self.cur.execute('''SELECT math_tags.feature, govern_models.model
                             FROM math_annotation
                             LEFT JOIN math_tags 
                                 ON math_annotation.feature_id = math_tags.id
                             LEFT JOIN govern_models
                                 ON math_annotation.govern_model_id = govern_models.id
-                            WHERE math_annotation.id_token_start <= (SELECT * FROM tokenid)
-                            AND math_annotation.id_token_end >= (SELECT * FROM tokenid)
+                            LEFT JOIN tokens
+                                ON tokens.token = math_annotation.annot_text
+                            LEFT JOIN grammar_annotation
+                                ON grammar_annotation.token_id = tokens.id
+                            LEFT JOIN lemmas
+                                ON grammar_annotation.lemma_id = lemmas.id
+                            WHERE lemmas.name = ?
                             LIMIT 1''', (lemma,))
         return self.cur.fetchone()
 
