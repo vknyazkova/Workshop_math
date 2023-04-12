@@ -24,6 +24,7 @@ def create_query_info(user_request: str, spacy_lm, db_path: str) -> QueryInfo:
         poses.append(t.pos_)
         token_info = QueryTokenInfo(token=t.text)
         math_info = db.get_math_info(t.lemma_)
+        # print(math_info)
         token_info.pos = t.pos_
         token_info.lemma = t.lemma_
         if math_info:
@@ -62,7 +63,6 @@ def create_sentences_info(matching_sentences, query_info: QueryInfo, db_path) ->
 
     sentences = []
     query_lemmas_with_colors = {l: query_info.tokens[i].color for i, l in enumerate(query_info.lemmatized.split(' '))}
-    print(query_lemmas_with_colors)
     db = WebDBHandler(db_path)
 
     for sent in matching_sentences:

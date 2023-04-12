@@ -60,7 +60,7 @@ def result_page(query, lang, ):
     matching_sentences = filter_selected_sentences(selected_sentences, query_info.lemmatized.split(' '))
     sents_info = create_sentences_info(matching_sentences, query_info, DB_PATH)
 
-    # print(query_info)
+    # print(query_info.pictures)
     #print(sents_info)
 
     return render_template('result.html', main_lan=lang, query_info=query_info, sents_info=sents_info, query=query)
