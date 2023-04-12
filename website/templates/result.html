@@ -84,12 +84,15 @@
                             <p class="u-text u-text-default u-text-2">
                             {% for ResultTokenInfo in ResultInfo.tokens %}
                             <abbr class="tooltip tooltip--top" data-tooltip="{{ResultTokenInfo.pos}}">
-                            <abbr class="tooltip tooltip--bottom {{ResultTokenInfo.color}}" data-tooltip="{{ResultTokenInfo.lemma}}">{{ResultTokenInfo.token}}</abbr></abbr>
-                              {%endfor%}
+                                <abbr class="tooltip tooltip--bottom {{ResultTokenInfo.color}}" data-tooltip="{{ResultTokenInfo.lemma}}">{{ResultTokenInfo.token}}</abbr>
+                            </abbr>
+                            {%endfor%}
                             {% if ResultInfo.youtube_link %}
-
-                            <img class="u-image u-image-default u-preserve-proportions u-image-1" src="static/images/yt.png" href="{{ResultInfo.youtube_link}}" height="16px" width="20px">
-                            {% endif %}</p>
+                                <a href="{{ ResultInfo.youtube_link }}" target="_blank">
+                                    <img class="u-image u-image-default u-preserve-proportions u-image-1" src="static/images/yt.png" height="16px" width="20px">
+                                </a>
+                            {% endif %}
+                            </p>
                         </div>
                     </div>
                 {%endfor%}
