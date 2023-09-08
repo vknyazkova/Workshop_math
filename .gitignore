@@ -133,3 +133,6 @@ dmypy.json
 
 # secret keys
 secret.py
+
+# intellij configs
+.idea/
