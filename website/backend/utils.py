@@ -3,6 +3,32 @@ from typing import Iterable
 
 from website.backend.database import WebDBHandler
 from website.backend.custom_dataclasses import ResultInfo, ResultTokenInfo, QueryInfo, QueryTokenInfo
+# from website.backend.custom_dataclasses import HTMLSpan, HTMLWord, HTMLSentence
+
+STICK_NEXT = '«"('
+STICK_PREV = ',.!?:»)'
+PUNCT_TAG = 'PUNCT'
+
+
+# def create_query_info2(user_request: str, spacy_lm, db_path: str) -> QueryInfo:
+#     query_info = QueryInfo(user_request)
+#     tokens, pics, lemmas, poses = [], [], [], []
+#
+#     db = WebDBHandler(db_path)
+#     for t in spacy_lm(user_request):
+#         lemmas.append(t.lemma_)
+#         poses.append(t.pos_)
+#         token_info = QueryTokenInfo(token=t.text)
+#         pic = db.find_math_markup_for_lemma(t.lemma_)
+#         if pic:
+#             pics.append(pic[0])
+#             token_info.color = 'pink'
+#         tokens.append(token_info)
+#     query_info.tokens = tokens
+#     query_info.pictures = pics
+#     query_info.lemmatized = ' '.join(lemmas)
+#     query_info.pos_string = ' '.join(poses)
+#     return query_info
 
 
 def create_query_info(user_request: str, spacy_lm, db_path: str) -> QueryInfo:
@@ -40,6 +66,31 @@ def create_query_info(user_request: str, spacy_lm, db_path: str) -> QueryInfo:
     query_info.lemmatized = ' '.join(lemmas)
     query_info.pos_string = ' '.join(poses)
     return query_info
+
+
+# def add_spaces(*punct):
+#     res = ''
+#     for p in punct:
+#         if p in STICK_PREV:
+#             res = res.rstrip() + p + ' '
+#         elif p in STICK_NEXT:
+#             res = res.rstrip() + ' ' + p
+#         else:
+#             raise ValueError('Unknown punctuation')
+#     return res
+#
+#
+# def generate_html_token(tokens: Iterable[tuple]):
+#     for t1, t2 in zip(tokens, tokens[1:]):
+#         if t1[1] != PUNCT_TAG and t2[1] != PUNCT_TAG:
+#             yield HTMLWord(text=t1[0], pos=t1[1], lemma=t1[2])
+#             yield HTMLSpan(text=' ')
+#         elif t1[1] != PUNCT_TAG and t2[1] == PUNCT_TAG:
+#             yield HTMLWord(text=t1[0], pos=t1[1], lemma=t1[2])
+#         elif t1[1] == PUNCT_TAG and t2[1] != PUNCT_TAG:
+#             yield HTMLSpan(text=add_spaces(t1[2]))
+#         elif t1[1] == PUNCT_TAG and t2[1] == PUNCT_TAG:
+#             yield HTMLSpan(text=add_spaces(t1[2], t2[2]))
 
 
 def filter_selected_sentences(db_selected, user_request) -> Iterable[tuple]:
