@@ -46,6 +46,24 @@ class WebDBHandler:
                             FROM math_imgs''')
         return self.cur.fetchall()
 
+    # def find_math_markup_for_lemma(self, lemma):
+    #     lemma = lemma.lower()
+    #     self.cur.execute('''SELECT math_imgs.filename
+    #                         FROM math_imgs
+    #                         JOIN math_tags2
+    #                         ON math_tags2.tag = math_imgs.math_tagname
+    #                         LEFT JOIN math_entities_annot
+    #                         ON math_tags2.id = math_entities_annot.id
+    #                         LEFT JOIN math_entity_tokens
+    #                         ON math_entity_tokens.math_entity_id = math_entities_annot.id
+    #                         LEFT JOIN grammar_annotation
+    #                         ON grammar_annotation.token_id = math_entity_tokens.token_id
+    #                         LEFT JOIN lemmas
+    #                         ON lemmas.id = grammar_annotation.lemma_id
+    #                         WHERE lemmas.name = ?
+    #                         LIMIT 1''', (lemma,))
+    #     return self.cur.fetchone()
+
     def get_grammar_annotation(self, sent_id):
         self.cur.execute('''SELECT tokens.token, pos.name, lemmas.name
                             FROM tokens
