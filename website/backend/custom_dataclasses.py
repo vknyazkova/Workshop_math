@@ -2,33 +2,6 @@ from dataclasses import dataclass
 from typing import Iterable
 
 
-# @dataclass
-# class HTMLSpan:
-#     text: str
-#     html_type: str = 'plain'
-#     color: str = 'black'
-#
-#
-# @dataclass
-# class HTMLQueryWord(HTMLSpan):
-#     html_type = 'tooltip'
-#     color = 'green'
-#     model: str = None
-#
-#
-# @dataclass
-# class HTMLResultWord(HTMLSpan):
-#     html_type: str = 'tooltip'
-#     pos: str = None
-#     lemma: str = None
-#
-#
-# @dataclass
-# class HTMLSentence:
-#     tokens: Iterable[HTMLSpan]
-#     youtube_link: str
-
-
 @dataclass
 class TokenInfo:
     token: str
