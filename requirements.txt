@@ -1,0 +1,4 @@
+flask~=2.3.3
+spacy~=3.6.1
+tqdm~=4.66.1
+ru-core-news-sm @ https://github.com/explosion/spacy-models/releases/download/ru_core_news_sm-3.5.0/ru_core_news_sm-3.5.0-py3-none-any.whl
