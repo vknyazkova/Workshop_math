@@ -136,3 +136,6 @@ secret.py
 
 # intellij configs
 .idea/
+
+# mac
+**/.DS_Store
