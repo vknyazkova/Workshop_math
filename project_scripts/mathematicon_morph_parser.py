@@ -85,5 +85,13 @@ class MorphologyCorrectionHandler:
         for token in doc:
             pymorphy_parsed = self._morph.parse(token.text)[0]
             for fix in self.fixes:
-                token = fix(token, pymorphy_parsed)
+                try:
+                    token = fix(token, pymorphy_parsed)
+                except Exception as e:
+                    error_msg = (
+                        f'Exception "{e}" was raised on token '    
+                        f'({token.text}, {token.pos_}, {token.lemma_}) '
+                        f'during execution of "{fix.__name__}" function'
+                    )
+                    print(error_msg)
         return doc
